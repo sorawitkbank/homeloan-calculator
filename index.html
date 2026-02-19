@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โปรแกรมคำนวณสินเชื่อบ้าน v1.0.2</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1120;--bg2:#0f172a;--card:#131c31;--card2:#172033;
+  --inp:#1a2744;--grn:#22d3a7;--blu:#38bdf8;--gld:#facc15;
+  --pnk:#fb7185;--org:#fb923c;--txt:#e2e8f0;--txt2:#94a3b8;
+  --mut:#64748b;--brd:#1e293b;--brd2:#334155;--r:14px;--r2:10px;
+  --glow-grn:0 0 20px rgba(34,211,167,.08);
+  --glow-blu:0 0 20px rgba(56,189,248,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;line-height:1.7}
+
+/* HEADER */
+.hdr{background:var(--bg2);border-bottom:1px solid var(--brd);padding:16px 24px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.hdr h1{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.hdr h1 span{background:linear-gradient(135deg,var(--grn),var(--blu));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{font-size:11px;color:var(--mut);margin-top:2px;letter-spacing:.3px}
+
+/* TABS */
+.tabs{display:flex;gap:6px;background:var(--bg2);padding:8px 16px;border-bottom:1px solid var(--brd);overflow-x:auto}
+.tab{padding:10px 22px;border:1px solid transparent;background:transparent;color:var(--txt2);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;font-weight:600;border-radius:var(--r2);cursor:pointer;white-space:nowrap;transition:all .25s ease;letter-spacing:-.2px}
+.tab:hover{background:var(--card);color:var(--txt);border-color:var(--brd)}
+.tab.on{background:linear-gradient(135deg,rgba(34,211,167,.1),rgba(56,189,248,.08));color:var(--grn);border-color:rgba(34,211,167,.25);box-shadow:var(--glow-grn)}
+
+/* TAB CONTENT */
+.tc{display:none;padding:20px;max-width:1440px;margin:0 auto}
+.tc.on{display:block;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION TITLE */
+.st{font-size:17px;font-weight:700;color:var(--txt);margin-bottom:16px;padding-bottom:10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--brd)}
+.st .accent{color:var(--grn)}
+
+/* CARDS */
+.cd{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:20px;margin-bottom:16px;transition:border-color .2s}
+
+/* INPUT */
+.ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.ig label{font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:4px;letter-spacing:.2px}
+.ig input,.ig select{padding:10px 14px;border:1px solid var(--brd);border-radius:var(--r2);background:var(--inp);color:var(--txt);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;width:100%;transition:all .2s}
+.ig input:focus,.ig select:focus{outline:0;border-color:var(--grn);box-shadow:0 0 0 3px rgba(34,211,167,.1)}
+
+/* RATE GRID */
+.rg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.rg .rh{font-size:11px;color:var(--mut);text-align:center;padding-bottom:4px;font-weight:500}
+.rg input{width:100%;padding:10px 6px;border:1px solid var(--brd);border-radius:var(--r2);background:var(--inp);color:var(--txt);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;text-align:center;transition:all .2s}
+.rg input:focus{outline:0;border-color:var(--grn);box-shadow:0 0 0 3px rgba(34,211,167,.1)}
+
+/* BUTTONS */
+.br{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap}
+.b1{padding:12px 28px;border:none;border-radius:var(--r2);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .25s;background:linear-gradient(135deg,var(--grn),#15b89a);color:var(--bg);letter-spacing:-.2px}
+.b1:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(34,211,167,.25)}
+.b1:active{transform:translateY(0)}
+.b2{padding:12px 28px;border:1px solid var(--brd2);border-radius:var(--r2);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;font-weight:600;cursor:pointer;background:var(--card);color:var(--txt2);transition:all .2s}
+.b2:hover{border-color:var(--txt2);color:var(--txt)}
+
+/* RECOMMEND BOX */
+.rc{background:linear-gradient(135deg,rgba(250,204,21,.04),rgba(251,146,60,.03));border:1px solid rgba(250,204,21,.15);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.rc h3{font-size:15px;font-weight:700;color:var(--gld);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.rc p{font-size:13px;color:var(--txt2);line-height:1.8;margin-bottom:6px}
+.rc .hl{color:var(--gld);font-weight:700}
+.rc .bullet{color:var(--gld);margin-right:4px}
+
+/* SUMMARY TABLE (like screenshot) */
+.sum-panel{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);overflow:hidden}
+.sum-panel .panel-hdr{padding:14px 20px;font-size:15px;font-weight:700;border-bottom:1px solid var(--brd)}
+.sum-panel .panel-hdr.flat{color:var(--grn);border-top:3px solid var(--grn)}
+.sum-panel .panel-hdr.step{color:var(--blu);border-top:3px solid var(--blu)}
+.sum-panel .panel-hdr.normal{color:var(--txt2);border-top:3px solid var(--mut)}
+.sum-panel .panel-hdr.yearly{color:var(--gld);border-top:3px solid var(--gld)}
+.sum-panel .panel-hdr.monthly{color:var(--grn);border-top:3px solid var(--grn)}
+.sum-panel .panel-hdr.bank-a{color:var(--grn);border-top:3px solid var(--grn)}
+.sum-panel .panel-hdr.bank-b{color:var(--blu);border-top:3px solid var(--blu)}
+.sum-panel .panel-hdr.diff{color:var(--pnk);border-top:3px solid var(--pnk)}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:11px 20px;border-bottom:1px solid rgba(30,41,59,.7);transition:background .15s}
+.sum-row:hover{background:rgba(34,211,167,.02)}
+.sum-row:last-child{border-bottom:none}
+.sum-row .lbl{font-size:13px;color:var(--txt2);font-weight:400}
+.sum-row .val{font-size:14px;font-weight:700;color:var(--txt);text-align:right;letter-spacing:-.2px}
+.sum-row .val.grn{color:var(--grn)}.sum-row .val.blu{color:var(--blu)}
+.sum-row .val.gld{color:var(--gld)}.sum-row .val.pnk{color:var(--pnk)}
+
+/* DATA TABLE */
+table{width:100%;border-collapse:collapse;font-size:12px}
+table th{background:var(--bg2);color:var(--blu);padding:10px 8px;text-align:right;font-weight:700;font-size:11px;letter-spacing:.3px;text-transform:uppercase;border-bottom:2px solid var(--brd);position:sticky;top:0;z-index:1}
+table td{padding:8px;text-align:right;border-bottom:1px solid rgba(30,41,59,.5);color:var(--txt2);font-size:12px;font-variant-numeric:tabular-nums}
+table tr:hover td{background:rgba(34,211,167,.02)}
+table th:first-child,table td:first-child{text-align:center}
+.tw{max-height:450px;overflow-y:auto;border-radius:var(--r2);border:1px solid var(--brd)}
+.tw::-webkit-scrollbar{width:5px}
+.tw::-webkit-scrollbar-track{background:var(--bg2)}
+.tw::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px}
+
+/* LAYOUTS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.pos{color:var(--grn)!important}.neg{color:var(--pnk)!important}
+
+/* BADGES */
+.bg-a{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(34,211,167,.1);color:var(--grn);letter-spacing:.3px}
+.bg-b{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(56,189,248,.1);color:var(--blu);letter-spacing:.3px}
+.bg-d{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(251,113,133,.1);color:var(--pnk);letter-spacing:.3px}
+.ext-inp{padding:10px 14px;border:1px solid var(--brd);border-radius:var(--r2);background:var(--inp);color:var(--txt);font-family:"IBM Plex Sans Thai",sans-serif;font-size:14px;width:100%;transition:all .2s}
+.ext-inp:focus{outline:0;border-color:var(--grn);box-shadow:0 0 0 3px rgba(34,211,167,.1)}
+.hid{display:none!important}
+
+@media(max-width:768px){
+  /* Layout: stack everything */
+  .g2,.g3{grid-template-columns:1fr!important;gap:10px!important}
+  .rg{grid-template-columns:repeat(2,1fr)}
+  .ig{grid-template-columns:1fr}
+
+  /* Header */
+  .hdr{padding:12px 14px;position:relative}
+  .hdr h1{font-size:16px}
+  .hdr .sub{font-size:9px}
+
+  /* Tabs: horizontal scroll, smaller */
+  .tabs{padding:6px 8px;gap:4px}
+  .tab{padding:8px 12px;font-size:12px;min-width:auto}
+
+  /* Content area */
+  .tc{padding:10px}
+  .cd{padding:14px 12px}
+  .st{font-size:14px;padding-bottom:8px;margin-bottom:10px}
+
+  /* Input fields: bigger touch targets */
+  .ig input,.ig select,.rg input{font-size:16px!important;padding:12px 10px!important;-webkit-appearance:none}
+  .ig label{font-size:11px}
+  .rg .rh{font-size:10px}
+
+  /* Buttons: full width on mobile */
+  .br{flex-direction:column}
+  .b1,.b2,.btn-print{width:100%;text-align:center;padding:14px;font-size:15px}
+
+  /* Summary panels */
+  .sum-panel .panel-hdr{padding:10px 14px;font-size:13px}
+  .sum-row{padding:8px 14px}
+  .sum-row .lbl{font-size:11px}
+  .sum-row .val{font-size:12px;max-width:55%;text-align:right;word-break:break-word}
+
+  /* Mini 3yr table inside panels */
+  .sum-panel table{font-size:10px!important}
+  .sum-panel table th,.sum-panel table td{padding:4px 3px!important}
+
+  /* Data tables: horizontal scroll */
+  .tw{max-height:350px;overflow:auto;-webkit-overflow-scrolling:touch}
+  table{font-size:11px;min-width:500px}
+  table th{font-size:10px;padding:8px 4px;white-space:nowrap}
+  table td{padding:6px 4px;font-size:11px}
+
+  /* Recommend box */
+  .rc{padding:14px}
+  .rc h3{font-size:13px}
+  .rc p{font-size:11px;line-height:1.7}
+
+  /* Badges */
+  .bg-a,.bg-b,.bg-d{font-size:10px;padding:1px 8px}
+
+  /* Section title */
+  .st{font-size:13px;gap:4px}
+
+  /* Compare tab: inputs inside card */
+  .cd .g2{gap:10px!important}
+
+  /* Extra pay inputs */
+  .ext-inp{font-size:16px!important;padding:12px 10px!important}
+
+  /* Extra pay checkbox labels */
+  .cd label[style*="cursor:pointer"]{font-size:11px!important}
+
+  /* Disclaimer */
+  .disclaimer p{font-size:10px!important;line-height:1.6!important}
+  .disclaimer h4{font-size:11px!important}
+}
+
+/* PRINT STYLES */
+.btn-print{padding:10px 22px;border:1px solid var(--gld);border-radius:var(--r2);font-family:'IBM Plex Sans Thai',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:rgba(250,204,21,.08);color:var(--gld);transition:all .2s}
+.btn-print:hover{background:rgba(250,204,21,.15);border-color:var(--gld)}
+
+
+
+/* PRINT: hide everything, show only #print-area */
+.print-info{display:none}
+#print-area{display:none}
+@media print{
+  body>*:not(#print-area){display:none!important}
+  #print-area{display:block!important;background:#fff!important;color:#1a1a1a!important;font-family:'IBM Plex Sans Thai',sans-serif!important;font-size:9px!important;line-height:1.5!important}
+  #print-area *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  @page{size:A4 portrait;margin:8mm}
+}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <h1>🏠 <span>โปรแกรมคำนวณสินเชื่อบ้าน</span></h1>
+  <div class="sub">Home Loan Calculator v1.0.2 &nbsp;|&nbsp; MRR = 6.68% &nbsp;|&nbsp; Cushion Rate = 0.25%</div>
+</div>
+<div class="tabs">
+  <button class="tab on" onclick="sw('calc',this)">📊 คำนวณค่างวด</button>
+  <button class="tab" onclick="sw('cmp',this)">⚖️ เปรียบเทียบ</button>
+  <button class="tab" onclick="sw('ext',this)">💰 จำลองการโปะ</button>
+</div>
+
+<!-- ============ TAB 1: CALCULATOR ============ -->
+<div id="t-calc" class="tc on">
+<div class="cd">
+  <div class="st">📝 กรอกข้อมูลรายละเอียดการกู้</div>
+  <div class="ig">
+    <div><label>ยอดกู้ (บาท)</label><input id="c_l" value="3,000,000" oninput="fn(this)"></div>
+    <div><label>จำนวนปี</label><input type="number" id="c_y" value="30" min="1" max="40"></div>
+  </div>
+  <div style="margin-top:16px">
+    <label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:8px">🏦 อัตราดอกเบี้ย (%)</label>
+    <div class="rg">
+      <div><div class="rh">ปีที่ 1</div><input id="c_r1" value="2.99"></div>
+      <div><div class="rh">ปีที่ 2</div><input id="c_r2" value="4.40"></div>
+      <div><div class="rh">ปีที่ 3</div><input id="c_r3" value="4.95"></div>
+      <div><div class="rh">>= ปีที่ 4</div><input id="c_r4" value="6.05"></div>
+    </div>
+  </div>
+  <div class="br">
+    <button class="b1" onclick="doCalc()">📊 คำนวณ</button>
+    <button class="b2" onclick="clr('c')">🗑️ ล้างค่า</button>
+    <button class="btn-print no-print" onclick="doPrint('calc')">🖨️ พิมพ์</button>
+  </div>
+</div>
+<div id="cr" class="hid"></div>
+</div>
+
+<!-- ============ TAB 2: COMPARE ============ -->
+<div id="t-cmp" class="tc">
+<div class="cd">
+  <div class="st">⚖️ เปรียบเทียบ 2 ข้อเสนอ (A vs B)</div>
+  <div class="g2">
+    <div class="cd" style="border-color:rgba(34,211,167,.2);margin:0">
+      <h3 style="color:var(--grn);font-size:14px;font-weight:700;margin-bottom:12px">🏦 <span class="bg-a">A</span> ข้อเสนอ A (ธนาคารเรา)</h3>
+      <div class="ig">
+        <div><label>ยอดกู้</label><input id="a_l" value="3,000,000" oninput="fn(this)"></div>
+        <div><label>จำนวนปี</label><input type="number" id="a_y" value="30"></div>
+        <div><label>รูปแบบ</label><select id="a_t" onchange="togPmt('a')"><option value="flat">แบบคงที่ (Flat)</option><option value="step">แบบขั้นบันได (Step)</option></select></div>
+      </div>
+      <div style="margin-top:12px"><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:6px">อัตราดอกเบี้ย (%)</label>
+        <div class="rg"><div><div class="rh">ปี 1</div><input id="a_r1" value="2.99"></div><div><div class="rh">ปี 2</div><input id="a_r2" value="4.40"></div><div><div class="rh">ปี 3</div><input id="a_r3" value="4.95"></div><div><div class="rh">>= ปี 4</div><input id="a_r4" value="6.05"></div></div>
+      </div>
+      <div id="a_pmt_area" style="margin-top:10px">
+        <div id="a_fd"><label style="font-size:11px;color:var(--mut)">ค่างวด/เดือน (Optional, 0 = อัตโนมัติ)</label><div class="rg" style="grid-template-columns:1fr;margin-top:4px;max-width:220px"><div><div class="rh">ค่างวด</div><input id="a_fp" value="0" oninput="fn(this)"></div></div></div>
+        <div id="a_sd" class="hid"><label style="font-size:11px;color:var(--mut)">ค่างวด/เดือน ปี 1-3 (Optional, 0 = อัตโนมัติ)</label><div class="rg" style="grid-template-columns:repeat(3,1fr);margin-top:4px"><div><div class="rh">ปี 1</div><input id="a_p1" value="0" oninput="fn(this)"></div><div><div class="rh">ปี 2</div><input id="a_p2" value="0" oninput="fn(this)"></div><div><div class="rh">ปี 3</div><input id="a_p3" value="0" oninput="fn(this)"></div></div></div>
+      </div>
+    </div>
+    <div class="cd" style="border-color:rgba(56,189,248,.2);margin:0">
+      <h3 style="color:var(--blu);font-size:14px;font-weight:700;margin-bottom:12px">🏛️ <span class="bg-b">B</span> ข้อเสนอ B (คู่แข่ง)</h3>
+      <div class="ig">
+        <div><label>ยอดกู้</label><input id="b_l" value="3,000,000" oninput="fn(this)"></div>
+        <div><label>จำนวนปี</label><input type="number" id="b_y" value="30"></div>
+        <div><label>รูปแบบ</label><select id="b_t" onchange="togPmt('b')"><option value="flat">แบบคงที่ (Flat)</option><option value="step">แบบขั้นบันได (Step)</option></select></div>
+      </div>
+      <div style="margin-top:12px"><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:6px">อัตราดอกเบี้ย (%)</label>
+        <div class="rg"><div><div class="rh">ปี 1</div><input id="b_r1" value="2.59"></div><div><div class="rh">ปี 2</div><input id="b_r2" value="4.50"></div><div><div class="rh">ปี 3</div><input id="b_r3" value="5.20"></div><div><div class="rh">>= ปี 4</div><input id="b_r4" value="6.15"></div></div>
+      </div>
+      <div id="b_pmt_area" style="margin-top:10px">
+        <div id="b_fd"><label style="font-size:11px;color:var(--mut)">ค่างวด/เดือน (Optional, 0 = อัตโนมัติ)</label><div class="rg" style="grid-template-columns:1fr;margin-top:4px;max-width:220px"><div><div class="rh">ค่างวด</div><input id="b_fp" value="0" oninput="fn(this)"></div></div></div>
+        <div id="b_sd" class="hid"><label style="font-size:11px;color:var(--mut)">ค่างวด/เดือน ปี 1-3 (Optional, 0 = อัตโนมัติ)</label><div class="rg" style="grid-template-columns:repeat(3,1fr);margin-top:4px"><div><div class="rh">ปี 1</div><input id="b_p1" value="0" oninput="fn(this)"></div><div><div class="rh">ปี 2</div><input id="b_p2" value="0" oninput="fn(this)"></div><div><div class="rh">ปี 3</div><input id="b_p3" value="0" oninput="fn(this)"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="br">
+    <button class="b1" onclick="doCmp()">⚖️ เปรียบเทียบ</button>
+    <button class="b2" onclick="clr('m')">🗑️ ล้างค่า</button>
+    <button class="btn-print no-print" onclick="doPrint('cmp')">🖨️ พิมพ์</button>
+  </div>
+</div>
+<div id="mr" class="hid"></div>
+</div>
+
+<!-- ============ TAB 3: EXTRA PAY ============ -->
+<div id="t-ext" class="tc">
+<div class="cd">
+  <div class="st">💰 จำลองการโปะหนี้</div>
+  <div class="ig">
+    <div><label>ยอดกู้ (บาท)</label><input id="e_l" value="3,000,000" oninput="fn(this)"></div>
+    <div><label>จำนวนปี</label><input type="number" id="e_y" value="30"></div>
+  </div>
+  <div style="margin-top:16px"><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:8px">🏦 อัตราดอกเบี้ย (%)</label>
+    <div class="rg"><div><div class="rh">ปี 1</div><input id="e_r1" value="2.99"></div><div><div class="rh">ปี 2</div><input id="e_r2" value="4.40"></div><div><div class="rh">ปี 3</div><input id="e_r3" value="4.95"></div><div><div class="rh">>= ปี 4</div><input id="e_r4" value="6.05"></div></div>
+  </div>
+  <div style="margin-top:16px" class="g2">
+    <div><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:4px">💵 โปะรายปี (บาท/ปี)</label><input id="e_ey" value="100,000" oninput="fn(this)" class="ext-inp"><label style="font-size:11px;color:var(--txt2);cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:6px"><input type="checkbox" id="e_yr2y" checked style="accent-color:var(--gld);width:15px;height:15px"> เริ่มโปะปีที่ 2 (งวดที่ 24)</label></div>
+    <div><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:4px">💵 โปะรายเดือน (บาท/เดือน)</label><input id="e_em" value="5,000" oninput="fn(this)" class="ext-inp"><label style="font-size:11px;color:var(--txt2);cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:6px"><input type="checkbox" id="e_yr2m" checked style="accent-color:var(--grn);width:15px;height:15px"> เริ่มโปะปีที่ 2 (งวดที่ 13)</label></div>
+  </div>
+
+  <div class="br">
+    <button class="b1" onclick="doExt()">💰 คำนวณ</button>
+    <button class="b2" onclick="clr('e')">🗑️ ล้างค่า</button>
+    <button class="btn-print no-print" onclick="doPrint('ext')">🖨️ พิมพ์</button>
+  </div>
+</div>
+<div id="er" class="hid"></div>
+</div>
+
+<script>
+const CSH=.0025;
+function pn(v){return parseFloat(String(v).replace(/,/g,''))||0}
+function fm(n){return Math.round(n).toLocaleString('en-US')}
+function fp(n){return(n*100).toFixed(2)+'%'}
+function fn(e){let v=e.value.replace(/,/g,'').replace(/[^\d.]/g,'');if(!v)return;let p=v.split('.');p[0]=parseInt(p[0]||0).toLocaleString('en-US');e.value=p.join('.')}
+function sw(t,el){document.querySelectorAll('.tc').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));document.getElementById('t-'+t).classList.add('on');el.classList.add('on')}
+function PMT(r,n,pv){if(r===0)return-pv/n;let x=Math.pow(1+r,n);return(r*pv*x)/(x-1)}
+function rup(n){return Math.ceil(n/100)*100}
+function gr(m,r1,r2,r3,r4){return m<=12?r1:m<=24?r2:m<=36?r3:r4}
+function pt(m){return Math.floor(m/12)+' ปี '+(m%12)+' เดือน'}
+
+// Build summary panel row
+function sr(lbl,val,cls){return`<div class="sum-row"><span class="lbl">${lbl}</span><span class="val ${cls||''}">${val}</span></div>`}
+
+function amor(P,N,R,mode,mp,flatPmt){
+  let[r1,r2,r3,r4]=R,inst=[];
+  if(mode==='flat'){let p=flatPmt&&flatPmt>0?flatPmt:rup(PMT((r4+CSH)/12,N,P));inst=[p,p,p,p]}
+  else{let p1=rup(PMT((r1+CSH)/12,N,P)),p2=rup(PMT((r2+CSH)/12,N,P)),p3=rup(PMT((r3+CSH)/12,N,P)),p4=rup(PMT((r4+CSH)/12,N,P));
+  if(mp&&mp[0]>0)p1=mp[0];if(mp&&mp[1]>0)p2=mp[1];if(mp&&mp[2]>0)p3=mp[2];inst=[p1,p2,p3,p4]}
+  let s=[],b=P,bp=inst[3];
+  for(let m=1;m<=N+120;m++){if(b<=.5)break;let y=Math.ceil(m/12),r=gr(m,r1,r2,r3,r4),i=b*(r/12);
+  let p=mode==='flat'?bp:m<=12?inst[0]:m<=24?inst[1]:m<=36?inst[2]:inst[3];
+  if(b<p)p=b+i;let pr=p-i;if(pr<0)pr=0;b-=pr;if(b<.5)b=0;
+  s.push({m,y,r,pmt:p,int:i,prn:pr,bal:b})}
+  return{s,inst}
+}
+
+function amorX(P,N,R,ey,em,yr2y,yr2m){
+  let[r1,r2,r3,r4]=R,bp=rup(PMT((r4+CSH)/12,N,P)),s=[],b=P;
+  let emStart=yr2m?13:1,eyStart=yr2y?24:12;
+  for(let m=1;m<=N+300;m++){if(b<=.5)break;let y=Math.ceil(m/12),r=gr(m,r1,r2,r3,r4),i=b*(r/12);
+  let p=bp,ex=0;if(em>0&&m>=emStart)ex+=em;if(ey>0&&m>=eyStart&&m%12===0)ex+=ey;p+=ex;
+  if(b+i<p)p=b+i;let pr=p-i;if(pr<0)pr=0;b-=pr;if(b<.5)b=0;
+  s.push({m,y,r,pmt:p,int:i,prn:pr,bal:b,ex})}
+  return{s,bp}
+}
+
+function byYr(s){let y={};for(let r of s){if(!y[r.y])y[r.y]={p:0,i:0,pr:0,b:0,r:r.r};y[r.y].p+=r.pmt;y[r.y].i+=r.int;y[r.y].pr+=r.prn;y[r.y].b=r.bal}return y}
+function tI(s){return s.reduce((a,r)=>a+r.int,0)}
+function i3(s){return s.filter(r=>r.m<=36).reduce((a,r)=>a+r.int,0)}
+function p3(s){return s.filter(r=>r.m<=36).reduce((a,r)=>a+r.prn,0)}
+function pm(s){return s.length}
+
+function xlRATE(nper,pmt,pv,fv){let r=.003;for(let i=0;i<500;i++){let xi=Math.pow(1+r,-nper);let f=pv+pmt*(1-xi)/r+fv*xi;let dxi=-nper*Math.pow(1+r,-nper-1);let df=pmt*(nper*xi/(r*(1+r))-(1-xi)/(r*r))+fv*dxi;if(Math.abs(df)<1e-15)break;let nr=r-f/df;if(Math.abs(nr-r)<1e-12)break;r=nr}return r}
+function irr(cf){let g=.005;for(let i=0;i<200;i++){let n=0,d=0;for(let j=0;j<cf.length;j++){n+=cf[j]/Math.pow(1+g,j);d-=j*cf[j]/Math.pow(1+g,j+1)}let ng=g-n/d;if(Math.abs(ng-g)<1e-10)return ng;g=ng;if(isNaN(g)||!isFinite(g))return 0}return g}
+function eir3(s){if(s.length<2)return 0;let P=s[0].bal+s[0].prn;let bp=s[0].pmt;let rem=s[Math.min(35,s.length-1)].bal;return xlRATE(Math.min(36,s.length),-bp,P,-rem)*12}
+function eir4(s){if(s.length<2)return 0;let P=s[0].bal+s[0].prn;let bp=s[0].pmt;let rem=s[Math.min(47,s.length-1)].bal;return xlRATE(Math.min(48,s.length),-bp,P,-rem)*12}
+function eirF(s){if(s.length<2)return 0;let P=s[0].bal+s[0].prn,cf=[-P];for(let r of s)cf.push(r.pmt);return irr(cf)*12}
+
+function ytb(yd){let h='';let ks=Object.keys(yd).map(Number).sort((a,b)=>a-b);for(let y of ks){let d=yd[y];if(d.i===0&&d.pr===0)continue;h+=`<tr><td>${y}</td><td>${(d.r*100).toFixed(2)}%</td><td>${fm(d.p)}</td><td>${fm(d.i)}</td><td>${fm(d.pr)}</td><td>${fm(Math.max(0,d.b))}</td></tr>`}return h}
+
+// Mini 3-year summary table for inside summary panels
+function y3tb(yd){
+  let ths='padding:2px 4px;text-align:right;font-size:9px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd)';
+  let tds='padding:2px 4px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);color:var(--txt2);font-size:9px';
+  let h='<table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center">ปี</th><th style="'+ths+'">อัตราดอกเบี้ย</th><th style="'+ths+'">ตัดดอกเบี้ย</th><th style="'+ths+'">ตัดเงินต้น</th><th style="'+ths+'">ยอดคงเหลือ</th></tr></thead><tbody>';
+  for(let y=1;y<=3;y++){
+    let d=yd[y];
+    if(!d) continue;
+    h+='<tr><td style="'+tds+';text-align:center">'+y+'</td><td style="'+tds+'">'+(d.r*100).toFixed(2)+'%</td><td style="'+tds+'">'+fm(d.i)+'</td><td style="'+tds+'">'+fm(d.pr)+'</td><td style="'+tds+'">'+fm(Math.max(0,d.b))+'</td></tr>';
+  }
+  h+='</tbody></table>';
+  return h;
+}
+
+// Diff 3-year table (B-A) for compare diff panel
+function y3df(aYd,bYd){
+  let ths='padding:2px 4px;text-align:right;font-size:9px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd)';
+  let h='<table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center">ปี</th><th style="'+ths+'">อัตราดอกเบี้ย</th><th style="'+ths+'">ตัดดอกเบี้ย</th><th style="'+ths+'">ตัดเงินต้น</th><th style="'+ths+'">ยอดคงเหลือ</th></tr></thead><tbody>';
+  for(let y=1;y<=3;y++){
+    let a=aYd[y],b=bYd[y];
+    if(!a||!b) continue;
+    let di=b.i-a.i,dp=b.pr-a.pr,db=b.b-a.b,dr=b.r-a.r;
+    let tds='padding:2px 4px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);font-size:9px';
+    let cc=function(v){return v>0?'color:var(--grn)':v<0?'color:var(--pnk)':'color:var(--txt2)'};
+    h+='<tr><td style="'+tds+';text-align:center;color:var(--txt2)">'+y+'</td>';
+    h+='<td style="'+tds+';'+cc(dr)+'">'+(dr>=0?'+':'')+(dr*100).toFixed(2)+'%</td>';
+    h+='<td style="'+tds+';'+cc(-di)+'">'+fm(di)+'</td>';
+    h+='<td style="'+tds+';'+cc(dp)+'">'+fm(dp)+'</td>';
+    h+='<td style="'+tds+';'+cc(-db)+'">'+fm(db)+'</td></tr>';
+  }
+  h+='</tbody></table>';
+  return h;
+}
+
+function clr(t){
+  if(t==='c'){['c_l','c_y','c_r1','c_r2','c_r3','c_r4'].forEach(i=>document.getElementById(i).value='');document.getElementById('cr').classList.add('hid');document.getElementById('cr').innerHTML=''}
+  if(t==='m'){['a_l','a_y','a_r1','a_r2','a_r3','a_r4','b_l','b_y','b_r1','b_r2','b_r3','b_r4','a_p1','a_p2','a_p3','b_p1','b_p2','b_p3','a_fp','b_fp'].forEach(i=>document.getElementById(i).value='');document.getElementById('a_t').value='flat';document.getElementById('b_t').value='flat';document.getElementById('a_fd').classList.remove('hid');document.getElementById('a_sd').classList.add('hid');document.getElementById('b_fd').classList.remove('hid');document.getElementById('b_sd').classList.add('hid');document.getElementById('mr').classList.add('hid');document.getElementById('mr').innerHTML=''}
+  if(t==='e'){['e_l','e_y','e_r1','e_r2','e_r3','e_r4','e_ey','e_em'].forEach(i=>document.getElementById(i).value='');document.getElementById('e_yr2y').checked=true;document.getElementById('e_yr2m').checked=true;document.getElementById('er').classList.add('hid');document.getElementById('er').innerHTML=''}
+}
+
+// ====== TAB 1: CALC ======
+function doCalc(){
+  let L=pn(document.getElementById('c_l').value),Y=pn(document.getElementById('c_y').value);
+  let R=[pn(document.getElementById('c_r1').value)/100,pn(document.getElementById('c_r2').value)/100,pn(document.getElementById('c_r3').value)/100,pn(document.getElementById('c_r4').value)/100];
+  if(!vld(['c_l','c_y','c_r1','c_r2','c_r3','c_r4'],['ยอดกู้','จำนวนปี','ดอกเบี้ยปีที่ 1','ดอกเบี้ยปีที่ 2','ดอกเบี้ยปีที่ 3','ดอกเบี้ยปีที่ 4']))return;
+  let N=Y*12,fl=amor(L,N,R,'flat',null),st=amor(L,N,R,'step',null);
+  let fS=fl.s,sS=st.s,fY=byYr(fS),sY=byYr(sS);
+  let fTI=tI(fS),sTI=tI(sS),fI3=i3(fS),sI3=i3(sS),fP3=p3(fS),sP3=p3(sS);
+  let fM=pm(fS),sM=pm(sS),fE3=eir3(fS),sE3=eir3(sS),fE4=eir4(fS),sE4=eir4(sS),fE=eirF(fS),sE=eirF(sS);
+  let fAvg3=(R[0]+R[1]+R[2])/3,sAvg3=fAvg3;
+
+  // Recommendation from Recc Calculator sheet logic
+  // Compare Flat(A) vs Step(B): EIR, interest, principal, installment, months
+  let rFacts=[];
+  // EIR 3yr comparison
+  if(fE3<sE3) rFacts.push('EIR 3 ปี แบบคงที่ ถูกกว่า '+fp(Math.abs(sE3-fE3)));
+  else if(fE3>sE3) rFacts.push('EIR 3 ปี แบบขั้นบันได ถูกกว่า '+fp(Math.abs(fE3-sE3)));
+  else rFacts.push('EIR 3 ปี เท่ากัน');
+  // Interest 3yr
+  if(fI3<sI3) rFacts.push('จำนวนดอกเบี้ยที่จ่าย 3 ปี แบบขั้นบันได แพงกว่า '+fm(sI3-fI3)+' บาท');
+  else if(fI3>sI3) rFacts.push('จำนวนดอกเบี้ยที่จ่าย 3 ปี แบบขั้นบันได ถูกกว่า '+fm(fI3-sI3)+' บาท');
+  else rFacts.push('จำนวนดอกเบี้ยที่จ่าย 3 ปี เท่ากัน');
+  // Principal 3yr
+  if(fP3>sP3) rFacts.push('จำนวนเงินต้นที่ตัด 3 ปี แบบขั้นบันได น้อยกว่า '+fm(fP3-sP3)+' บาท');
+  else if(fP3<sP3) rFacts.push('จำนวนเงินต้นที่ตัด 3 ปี แบบขั้นบันได มากกว่า '+fm(sP3-fP3)+' บาท');
+  else rFacts.push('จำนวนเงินต้นที่ตัด 3 ปี เท่ากัน');
+  let sum3line='สรุป 3 ปี: '+rFacts.join(', ');
+
+  let rFull=[];
+  // EIR full
+  if(fE<sE) rFull.push('อัตราดอกเบี้ยตลอดสัญญา แบบขั้นบันได แพงกว่า '+fp(Math.abs(sE-fE)));
+  else if(fE>sE) rFull.push('อัตราดอกเบี้ยตลอดสัญญา แบบขั้นบันได ถูกกว่า '+fp(Math.abs(fE-sE)));
+  else rFull.push('อัตราดอกเบี้ยตลอดสัญญา เท่ากัน');
+  // Installment yr1
+  let fPm1=fl.inst[3],sPm1=st.inst[0];
+  if(sPm1>fPm1) rFull.push('ค่างวดปีแรก แบบขั้นบันได แพงกว่า '+fm(sPm1-fPm1)+' บาท');
+  else if(sPm1<fPm1) rFull.push('ค่างวดปีแรก แบบขั้นบันได น้อยกว่า '+fm(fPm1-sPm1)+' บาท');
+  else rFull.push('ค่างวดปีแรก เท่ากัน');
+  // Months
+  if(sM>fM) rFull.push('จำนวนปีที่ต้องผ่อน แบบขั้นบันได มากกว่า '+pt(Math.abs(sM-fM)));
+  else if(sM<fM) rFull.push('จำนวนปีที่ต้องผ่อน แบบขั้นบันได น้อยกว่า '+pt(Math.abs(fM-sM)));
+  else rFull.push('จำนวนปีที่ต้องผ่อน เท่ากัน');
+  let sumFullLine='สรุปตลอดสัญญา: '+rFull.join(', ');
+
+  // Recommendation (from Recc Calculator scenarios)
+  let reccText='';
+  if(fE3<sE3) reccText='อย่างไรก็ตาม ข้อดีของแบบขั้นบันได คือค่างวดผ่อนชำระในช่วงแรกจะต่ำกว่า ช่วยเพิ่มสภาพคล่องทางการเงิน เหมาะสำหรับผู้ที่ต้องการลดภาระในช่วง 1-3 ปีแรก ดังนั้น หากผู้กู้ไม่มีปัญหาเรื่องสภาพคล่อง และต้องการประหยัดค่าใช้จ่ายโดยรวมสูงสุด การเลือกแบบผ่อนเท่ากันทุกงวดจะเหมาะสมมากกว่า';
+  else if(fE3>sE3) reccText='ถึงแม้ในกรณีนี้แบบขั้นบันไดจะคุ้มค่ากว่า แต่แบบผ่อนเท่ากันทุกงวดก็มีข้อดีในแง่ของค่างวดที่คงที่ ทำให้วางแผนการเงินในแต่ละเดือนได้ง่าย ดังนั้น แบบขั้นบันไดจึงเป็นตัวเลือกที่ดีในสถานการณ์นี้ เพราะให้ทั้งสภาพคล่องช่วงแรกและประหยัดกว่าในระยะยาว';
+  else reccText='ในกรณีนี้ การตัดสินใจจึงขึ้นอยู่กับความต้องการด้านสภาพคล่องเป็นหลัก หากผู้กู้ต้องการค่างวดคงที่เพื่อให้วางแผนง่าย ควรเลือกแบบที่ 1 แต่หากต้องการสภาพคล่องสูงในช่วงแรก แบบที่ 2 จะเป็นคำตอบที่ดีกว่า';
+
+  let h=`
+  <div class="print-info">
+    <div class="pi-title">🏠 <span>โปรแกรมคำนวณสินเชื่อบ้าน</span></div>
+    <div class="pi-sub">Home Loan Calculator v1.0.2 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
+    <div class="pi-bar"><span>ยอดกู้: <b>${fm(L)} บาท</b></span><span>ระยะเวลา: <b>${Y} ปี</b></span><span>ดอกเบี้ย: <b>${(R[0]*100).toFixed(2)}% / ${(R[1]*100).toFixed(2)}% / ${(R[2]*100).toFixed(2)}% / ${(R[3]*100).toFixed(2)}%</b> (ปี 1/2/3/4+)</span></div>
+  </div>
+  <div class="rc">
+    <h3>💡 สรุปภาพรวมสำหรับทีมขาย</h3>
+    <p><span class="bullet">•</span> ${sum3line}</p>
+    <p><span class="bullet">•</span> ${sumFullLine}</p>
+    <p style="margin-top:8px"><span class="bullet">•</span> <span class="hl">คำแนะนำ:</span> ${reccText}</p>
+  </div>
+
+  <div class="st" style="margin-top:20px">📋 สรุปรายละเอียดการกู้ <span style="font-size:11px;color:var(--mut);margin-left:auto;font-weight:400">ข้อมูล ณ ${new Date().toLocaleDateString('th-TH')}</span></div>
+  <div class="g2">
+    <div class="sum-panel">
+      <div class="panel-hdr flat">📗 แบบ 1: ผ่อนเท่ากันทุกงวด (Flat Rate)</div>
+      ${sr('ค่างวดต่อเดือน',fm(fl.inst[3])+' บาท','grn')}
+      ${sr('จำนวนปีที่ผ่อนจริง',pt(fM))}
+      ${sr('ดอกเบี้ยเฉลี่ย 3 ปี',fp(fAvg3))}
+      ${sr('EIR 3 ปี',fp(fE3))}
+      ${sr('EIR 4 ปี',fp(fE4))}
+      ${sr('EIR ตลอดสัญญา',fp(fE))}
+      ${sr('ดอกเบี้ยรวม 3 ปี',fm(fI3)+' บาท')}
+      ${sr('เงินต้นที่ตัด 3 ปี',fm(fP3)+' บาท')}
+      ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(fTI)+' บาท','grn')}
+      <div style="padding:0 12px 8px">${y3tb(fY)}</div>
+    </div>
+    <div class="sum-panel">
+      <div class="panel-hdr step">📘 แบบ 2: ขั้นบันได (Step Rate)</div>
+      ${sr('ค่างวดต่อเดือน','ปี1: '+fm(st.inst[0])+' / ปี2: '+fm(st.inst[1])+' / ปี3: '+fm(st.inst[2])+' / ปี4: '+fm(st.inst[3]),'blu')}
+      ${sr('จำนวนปีที่ผ่อนจริง',pt(sM))}
+      ${sr('ดอกเบี้ยเฉลี่ย 3 ปี',fp(sAvg3))}
+      ${sr('EIR 3 ปี',fp(sE3))}
+      ${sr('EIR 4 ปี',fp(sE4))}
+      ${sr('EIR ตลอดสัญญา',fp(sE))}
+      ${sr('ดอกเบี้ยรวม 3 ปี',fm(sI3)+' บาท')}
+      ${sr('เงินต้นที่ตัด 3 ปี',fm(sP3)+' บาท')}
+      ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(sTI)+' บาท','blu')}
+      <div style="padding:0 12px 8px">${y3tb(sY)}</div>
+    </div>
+  </div>
+
+  <div class="st" style="margin-top:20px">📊 ตารางสรุปรายปี</div>
+  <div class="g2">
+    <div><div style="font-size:13px;color:var(--grn);font-weight:700;margin-bottom:6px">📗 แบบ 1: Flat Rate</div><div class="tw"><table><thead><tr><th>ปี</th><th>อัตราดอกเบี้ย</th><th>ยอดผ่อน</th><th>ตัดดอกเบี้ย</th><th>ตัดเงินต้น</th><th>ยอดคงเหลือ</th></tr></thead><tbody>${ytb(fY)}</tbody></table></div></div>
+    <div><div style="font-size:13px;color:var(--blu);font-weight:700;margin-bottom:6px">📘 แบบ 2: Step Rate</div><div class="tw"><table><thead><tr><th>ปี</th><th>อัตราดอกเบี้ย</th><th>ยอดผ่อน</th><th>ตัดดอกเบี้ย</th><th>ตัดเงินต้น</th><th>ยอดคงเหลือ</th></tr></thead><tbody>${ytb(sY)}</tbody></table></div></div>
+  </div>`;
+  h+=`<div class="disclaimer" style="background:rgba(100,116,139,.06);border:1px solid var(--brd);border-radius:var(--r);padding:16px 20px;margin-top:20px">
+<h4 style="font-size:13px;font-weight:700;color:var(--txt2);margin-bottom:8px">⚠️ ข้อควรทราบ</h4>
+<p style="font-size:12px;color:var(--mut);line-height:1.8;margin:0">- เอกสารฉบับนี้เป็นข้อมูลการนำเสนอสินเชื่อบ้านเบื้องต้น ทั้งนี้เงื่อนไขและรายละเอียดการกู้ให้เป็นไปตามสัญญาเงินกู้ที่ลูกค้าลงนามไว้กับธนาคาร<br>- การคำนวณนี้ ยังไม่รวมค่าธรรมเนียมอื่นๆ เช่น ค่าประเมิน, ค่าจดจำนอง หรือค่าประกัน<br>- สอบถามรายละเอียดเพิ่มเติมที่ K Contact Center หมายเลขโทรศัพท์ 0-2888-8888</p>
+</div>`;
+  document.getElementById('cr').innerHTML=h;document.getElementById('cr').classList.remove('hid');document.getElementById('cr').scrollIntoView({behavior:'smooth'})
+}
+
+// ====== TAB 2: COMPARE ======
+function doCmp(){
+  let aL=pn(document.getElementById('a_l').value),aY=pn(document.getElementById('a_y').value),aT=document.getElementById('a_t').value;
+  let aR=[pn(document.getElementById('a_r1').value)/100,pn(document.getElementById('a_r2').value)/100,pn(document.getElementById('a_r3').value)/100,pn(document.getElementById('a_r4').value)/100];
+  let aP=[pn(document.getElementById('a_p1').value),pn(document.getElementById('a_p2').value),pn(document.getElementById('a_p3').value)];
+  let bL=pn(document.getElementById('b_l').value),bY=pn(document.getElementById('b_y').value),bT=document.getElementById('b_t').value;
+  let bR=[pn(document.getElementById('b_r1').value)/100,pn(document.getElementById('b_r2').value)/100,pn(document.getElementById('b_r3').value)/100,pn(document.getElementById('b_r4').value)/100];
+  let bP=[pn(document.getElementById('b_p1').value),pn(document.getElementById('b_p2').value),pn(document.getElementById('b_p3').value)];
+  if(!vld(['a_l','a_y','a_r1','a_r2','a_r3','a_r4'],['ยอดกู้ A','จำนวนปี A','ดอกเบี้ยปี1 A','ดอกเบี้ยปี2 A','ดอกเบี้ยปี3 A','ดอกเบี้ยปี4 A']))return;
+  if(!vld(['b_l','b_y','b_r1','b_r2','b_r3','b_r4'],['ยอดกู้ B','จำนวนปี B','ดอกเบี้ยปี1 B','ดอกเบี้ยปี2 B','ดอกเบี้ยปี3 B','ดอกเบี้ยปี4 B']))return;
+  let aFP=pn(document.getElementById('a_fp').value);
+  let bFP=pn(document.getElementById('b_fp').value);
+  let a=amor(aL,aY*12,aR,aT,aT==='step'?aP:null,aT==='flat'?aFP:null);
+  let b=amor(bL,bY*12,bR,bT,bT==='step'?bP:null,bT==='flat'?bFP:null);
+  let aS=a.s,bS=b.s,aYr=byYr(aS),bYr=byYr(bS);
+  let aTI=tI(aS),bTI=tI(bS),aI3=i3(aS),bI3=i3(bS),aP3=p3(aS),bP3=p3(bS);
+  let aM=pm(aS),bM=pm(bS),aE3=eir3(aS),bE3=eir3(bS),aE4=eir4(aS),bE4=eir4(bS),aE=eirF(aS),bE=eirF(bS);
+  let aAvg=(aR[0]+aR[1]+aR[2])/3,bAvg=(bR[0]+bR[1]+bR[2])/3;
+  let aPm=aS[0]?aS[0].pmt:0,bPm=bS[0]?bS[0].pmt:0;
+
+  // Recc Compare: 9 scenarios from Excel
+  let cs='',ad='';
+  if(aAvg<bAvg&&aPm<=bPm){cs='ทั้งดอกเบี้ยและค่างวดของ A ถูกกว่าทุกมุม';ad='สถานการณ์นี้เราชนะขาดทุกมุม ให้พูดด้วยความมั่นใจว่าข้อเสนอของเราคือทางเลือกที่ดีที่สุด และเร่งปิดการขายได้ทันที'}
+  else if(aAvg<bAvg&&aPm===bPm){cs='อัตราดอกเบี้ย 3ปี A ถูกกว่า และจ่ายค่างวดเท่ากัน';ad='ชี้ให้ลูกค้าเห็นว่าดอกเบี้ยที่แท้จริง (EIR) ของเราต่ำกว่า และจำนวนงวดที่ผ่อนก็น้อยกว่า'}
+  else if(aAvg<bAvg&&aPm>bPm){cs='อัตราดอกเบี้ย 3ปี A ถูกกว่า แต่จ่ายค่างวดแพงกว่า';ad='ชี้ให้ลูกค้าเห็นว่าดอกเบี้ยที่แท้จริง (EIR) ของเราต่ำกว่ามาก และจำนวนงวดที่ผ่อนก็น้อยกว่า'}
+  else if(aI3===bI3&&aPm<bPm){cs='อัตราดอกเบี้ย 3ปี เท่ากัน แต่ค่างวด A ถูกกว่า';ad='ชี้ให้ลูกค้าเห็นว่าดอกเบี้ยที่แท้จริง (EIR) ของเราต่ำกว่า โดยไม่ต้องเน้นเรื่องจำนวนงวดที่ผ่อน'}
+  else if(aI3===bI3&&aPm===bPm){cs='อัตราดอกเบี้ย 3ปี เท่ากัน และค่างวดเท่ากัน';ad='นำเสนอเรื่องบริการหลังการขาย ความสะดวกจากการใช้ Mobile App K+ ก่อน ถ้าลูกค้ายังไม่ตัดสินใจ ค่อยพิจารณานำเสนอ voucher ต่างๆ เพื่อให้ลูกค้าตัดสินใจไวขึ้น'}
+  else if(aI3===bI3&&aPm>bPm){cs='อัตราดอกเบี้ย 3ปี เท่ากัน ค่างวด A แพงกว่า';ad='ชี้ให้ลูกค้าเห็นว่าจำนวนงวดที่ผ่อนน้อยกว่า ส่วนอัตราดอกเบี้ยที่แท้จริง (EIR) ให้ดูตัวเลขประกอบว่าสามารถเอาชนะคู่แข่งได้หรือไม่'}
+  else if(aI3>bI3&&aPm<bPm){cs='อัตราดอกเบี้ย 3ปี A แพงกว่า แต่ค่างวดน้อยกว่า';ad='ชี้ให้เห็นว่าแม้ว่าดอกเบี้ยจะแพงกว่า แต่ยอดผ่อนต่อเดือนน้อยกว่า จะช่วยให้คุณลูกค้ามีภาระค่าใช้จ่ายต่อเดือนลดลง และถ้ามีการโปะเพิ่มในปีหลังๆ ก็จะช่วยลดยอดหนี้ลงได้ไวขึ้น'}
+  else if(aI3>bI3&&aPm===bPm){cs='อัตราดอกเบี้ย 3ปี A แพงกว่า แต่ค่างวดเท่ากัน';ad='ชี้ให้ลูกค้าเห็นว่าดอกเบี้ยที่แท้จริง (EIR) ตลอดสัญญาไม่ได้แตกต่างกัน ให้พิจารณาว่ายอดส่วนต่างที่เราแพ้ใน 3 ปีแรก ควรที่จะนำเสนอทางเลือกเช่น voucher ให้กับลูกค้า, compensate กับค่าคอมมิชชั่น และปรึกษาเคสกับทาง PM'}
+  else{cs='อัตราดอกเบี้ย 3ปี A แพงกว่า และค่างวดก็แพงกว่า';ad='เป็นเคสที่เราแข่งขันยาก ให้พิจารณาว่ายอดส่วนต่างที่เราแพ้ใน 3 ปีแรก ควรที่จะนำเสนอทางเลือกเช่น voucher ให้กับลูกค้า, compensate กับค่าคอมมิชชั่น และปรึกษาเคสกับทาง PM'}
+
+  // Recc Compare(facts) summary
+  let f3=[];
+  if(aAvg<bAvg)f3.push('อัตราดอกเบี้ย B แพงกว่า '+fp(Math.abs(bAvg-aAvg)));else if(aAvg>bAvg)f3.push('อัตราดอกเบี้ย B ถูกกว่า '+fp(Math.abs(aAvg-bAvg)));else f3.push('อัตราดอกเบี้ย เท่ากัน');
+  if(aE3<bE3)f3.push('EIR 3 ปี B แพงกว่า '+fp(Math.abs(bE3-aE3)));else if(aE3>bE3)f3.push('EIR 3 ปี B ถูกกว่า '+fp(Math.abs(aE3-bE3)));else f3.push('EIR 3 ปี เท่ากัน');
+  if(aI3<bI3)f3.push('จำนวนดอกเบี้ยที่จ่าย B แพงกว่า '+fm(bI3-aI3)+' บาท');else if(aI3>bI3)f3.push('จำนวนดอกเบี้ยที่จ่าย B ถูกกว่า '+fm(aI3-bI3)+' บาท');else f3.push('จำนวนดอกเบี้ยที่จ่าย เท่ากัน');
+  if(aP3>bP3)f3.push('จำนวนเงินต้นที่ตัด B น้อยกว่า A '+fm(aP3-bP3)+' บาท');else if(aP3<bP3)f3.push('จำนวนเงินต้นที่ตัด B มากกว่า A '+fm(bP3-aP3)+' บาท');else f3.push('จำนวนเงินต้นที่ตัด เท่ากัน');
+
+  let fAll=[];
+  if(aE<bE)fAll.push('อัตราดอกเบี้ยตลอดสัญญา B แพงกว่า '+fp(Math.abs(bE-aE)));else if(aE>bE)fAll.push('อัตราดอกเบี้ยตลอดสัญญา B ถูกกว่า '+fp(Math.abs(aE-bE)));else fAll.push('อัตราดอกเบี้ยตลอดสัญญา เท่ากัน');
+  if(bPm>aPm)fAll.push('ค่างวดปีแรก B แพงกว่า A '+fm(bPm-aPm)+' บาท');else if(bPm<aPm)fAll.push('ค่างวดปีแรก B น้อยกว่า A '+fm(aPm-bPm)+' บาท');else fAll.push('ค่างวดปีแรก เท่ากัน');
+  if(bM>aM)fAll.push('จำนวนปีที่ต้องผ่อน B มากกว่า '+pt(Math.abs(bM-aM)));else if(bM<aM)fAll.push('จำนวนปีที่ต้องผ่อน B น้อยกว่า '+pt(Math.abs(aM-bM)));else fAll.push('จำนวนปีที่ต้องผ่อน เท่ากัน');
+
+  let dM=bM-aM;
+  let dfn=(v)=>v>0?'+'+fm(v):v<0?fm(v):'0';
+
+  let h=`<div class="print-info">
+    <div class="pi-title">🏠 <span>เปรียบเทียบสินเชื่อบ้าน</span></div>
+    <div class="pi-sub">Home Loan Calculator v1.0.2 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
+    <div class="pi-bar"><span><b>A:</b> ${fm(aL)} บาท / ${aY} ปี / ${aT==='flat'?'คงที่':'ขั้นบันได'} / ดบ. ${(aR[0]*100).toFixed(2)}/${(aR[1]*100).toFixed(2)}/${(aR[2]*100).toFixed(2)}/${(aR[3]*100).toFixed(2)}%</span><span><b>B:</b> ${fm(bL)} บาท / ${bY} ปี / ${bT==='flat'?'คงที่':'ขั้นบันได'} / ดบ. ${(bR[0]*100).toFixed(2)}/${(bR[1]*100).toFixed(2)}/${(bR[2]*100).toFixed(2)}/${(bR[3]*100).toFixed(2)}%</span></div>
+  </div>
+  <div class="rc"><h3>💡 สรุปภาพรวมสำหรับทีมขาย</h3>
+  <p><span class="bullet">•</span> สรุป 3 ปี: ${f3.join(', ')}</p>
+  <p><span class="bullet">•</span> สรุปตลอดสัญญา: ${fAll.join(', ')}</p>
+  <p style="margin-top:8px"><span class="bullet">•</span> <span class="hl">สรุปเคส:</span> ${cs}</p>
+  <p><span class="bullet">•</span> <span class="hl">คำแนะนำ:</span> ${ad}</p></div>
+
+  <div class="st" style="margin-top:20px">📋 สรุปเปรียบเทียบ</div>
+  <div class="g3">
+    <div class="sum-panel"><div class="panel-hdr bank-a">🏦 <span class="bg-a">A</span>&nbsp; ข้อเสนอ A ${aT==='flat'?'(คงที่)':'(ขั้นบันได)'}</div>
+    ${sr('ยอดกู้',fm(aL)+' บาท')}
+    ${aT==='flat'?sr('ค่างวดต่อเดือน',fm(aPm)+' บาท','grn'):sr('ค่างวด ปี1/2/3/4+',fm(a.inst[0])+' / '+fm(a.inst[1])+' / '+fm(a.inst[2])+' / '+fm(a.inst[3])+' บาท','grn')}
+    ${sr('จำนวนปีที่ผ่อนจริง',pt(aM))}
+    ${sr('ดอกเบี้ยเฉลี่ย 3 ปี',fp(aAvg))}
+    ${sr('EIR 3 ปี',fp(aE3))}
+    ${sr('EIR 4 ปี',fp(aE4))}
+    ${sr('EIR ตลอดสัญญา',fp(aE))}
+    ${sr('ดอกเบี้ยรวม 3 ปี',fm(aI3)+' บาท')}
+    ${sr('เงินต้นที่ตัด 3 ปี',fm(aP3)+' บาท')}
+    ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(aTI)+' บาท','grn')}
+    <div style="padding:0 12px 8px">${y3tb(aYr)}</div></div>
+    <div class="sum-panel"><div class="panel-hdr bank-b">🏛️ <span class="bg-b">B</span>&nbsp; ข้อเสนอ B ${bT==='flat'?'(คงที่)':'(ขั้นบันได)'}</div>
+    ${sr('ยอดกู้',fm(bL)+' บาท')}
+    ${bT==='flat'?sr('ค่างวดต่อเดือน',fm(bPm)+' บาท','blu'):sr('ค่างวด ปี1/2/3/4+',fm(b.inst[0])+' / '+fm(b.inst[1])+' / '+fm(b.inst[2])+' / '+fm(b.inst[3])+' บาท','blu')}
+    ${sr('จำนวนปีที่ผ่อนจริง',pt(bM))}
+    ${sr('ดอกเบี้ยเฉลี่ย 3 ปี',fp(bAvg))}
+    ${sr('EIR 3 ปี',fp(bE3))}
+    ${sr('EIR 4 ปี',fp(bE4))}
+    ${sr('EIR ตลอดสัญญา',fp(bE))}
+    ${sr('ดอกเบี้ยรวม 3 ปี',fm(bI3)+' บาท')}
+    ${sr('เงินต้นที่ตัด 3 ปี',fm(bP3)+' บาท')}
+    ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(bTI)+' บาท','blu')}
+    <div style="padding:0 12px 8px">${y3tb(bYr)}</div></div>
+    <div class="sum-panel"><div class="panel-hdr diff">📊 <span class="bg-d">Diff</span>&nbsp; (B − A)</div>
+    ${sr('ยอดกู้',fm(bL-aL)+' บาท')}
+    ${(function(){let aI=a.inst,bI=b.inst;let d=[];for(let i=0;i<4;i++){let av=aT==='flat'?aI[0]:aI[i];let bv=bT==='flat'?bI[0]:bI[i];d.push(bv-av)}if(d[0]===d[1]&&d[1]===d[2]&&d[2]===d[3])return sr('ค่างวดต่อเดือน',fm(d[0])+' บาท',d[0]>0?'pos':d[0]<0?'neg':'');return sr('ค่างวด ปี1/2/3/4+',fm(d[0])+' / '+fm(d[1])+' / '+fm(d[2])+' / '+fm(d[3])+' บาท',d[0]>0?'pos':d[0]<0?'neg':'')})()}
+    ${sr('จำนวนปีที่ผ่อนจริง',(dM>0?'+':dM<0?'':'')+pt(Math.abs(dM)),dM>0?'neg':'pos')}
+    ${sr('ดอกเบี้ยเฉลี่ย 3 ปี',fp(bAvg-aAvg),bAvg-aAvg>0?'pos':'neg')}
+    ${sr('EIR 3 ปี',fp(bE3-aE3),bE3-aE3>0?'pos':'neg')}
+    ${sr('EIR 4 ปี',fp(bE4-aE4),bE4-aE4>0?'pos':'neg')}
+    ${sr('EIR ตลอดสัญญา',fp(bE-aE),bE-aE>0?'pos':'neg')}
+    ${sr('ดอกเบี้ยรวม 3 ปี',fm(bI3-aI3)+' บาท',bI3-aI3>0?'pos':'neg')}
+    ${sr('เงินต้นที่ตัด 3 ปี',fm(bP3-aP3)+' บาท',bP3-aP3>0?'pos':'neg')}
+    ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(bTI-aTI)+' บาท',bTI-aTI>0?'pos':'neg')}
+    <div style="padding:0 12px 8px">${y3df(aYr,bYr)}</div></div>
+  </div>
+
+  <div class="st" style="margin-top:20px">📊 ตารางสรุปรายปี</div>
+  <div class="g2">
+    <div><div style="font-size:13px;color:var(--grn);font-weight:700;margin-bottom:6px">🏦 <span class="bg-a">A</span></div><div class="tw" style="max-height:380px"><table><thead><tr><th>ปี</th><th>อัตราดอกเบี้ย</th><th>ยอดผ่อน</th><th>ตัดดอกเบี้ย</th><th>ตัดเงินต้น</th><th>ยอดคงเหลือ</th></tr></thead><tbody>${ytb(aYr)}</tbody></table></div></div>
+    <div><div style="font-size:13px;color:var(--blu);font-weight:700;margin-bottom:6px">🏛️ <span class="bg-b">B</span></div><div class="tw" style="max-height:380px"><table><thead><tr><th>ปี</th><th>อัตราดอกเบี้ย</th><th>ยอดผ่อน</th><th>ตัดดอกเบี้ย</th><th>ตัดเงินต้น</th><th>ยอดคงเหลือ</th></tr></thead><tbody>${ytb(bYr)}</tbody></table></div></div>
+  </div>`;
+  h+=`<div class="disclaimer" style="background:rgba(100,116,139,.06);border:1px solid var(--brd);border-radius:var(--r);padding:16px 20px;margin-top:20px">
+<h4 style="font-size:13px;font-weight:700;color:var(--txt2);margin-bottom:8px">⚠️ ข้อควรทราบ</h4>
+<p style="font-size:12px;color:var(--mut);line-height:1.8;margin:0">- เอกสารฉบับนี้เป็นข้อมูลการนำเสนอสินเชื่อบ้านเบื้องต้น ทั้งนี้เงื่อนไขและรายละเอียดการกู้ให้เป็นไปตามสัญญาเงินกู้ที่ลูกค้าลงนามไว้กับธนาคาร<br>- การคำนวณนี้ ยังไม่รวมค่าธรรมเนียมอื่นๆ เช่น ค่าประเมิน, ค่าจดจำนอง หรือค่าประกัน<br>- สอบถามรายละเอียดเพิ่มเติมที่ K Contact Center หมายเลขโทรศัพท์ 0-2888-8888</p>
+</div>`;
+  document.getElementById('mr').innerHTML=h;document.getElementById('mr').classList.remove('hid');document.getElementById('mr').scrollIntoView({behavior:'smooth'})
+}
+
+// ====== TAB 3: EXTRA PAY ======
+function doExt(){
+  let L=pn(document.getElementById('e_l').value),Y=pn(document.getElementById('e_y').value);
+  let R=[pn(document.getElementById('e_r1').value)/100,pn(document.getElementById('e_r2').value)/100,pn(document.getElementById('e_r3').value)/100,pn(document.getElementById('e_r4').value)/100];
+  let ey=pn(document.getElementById('e_ey').value),em=pn(document.getElementById('e_em').value);
+  let yr2y=document.getElementById('e_yr2y').checked;
+  let yr2m=document.getElementById('e_yr2m').checked;
+  if(!vld(['e_l','e_y','e_r1','e_r2','e_r3','e_r4'],['ยอดกู้','จำนวนปี','ดอกเบี้ยปีที่ 1','ดอกเบี้ยปีที่ 2','ดอกเบี้ยปีที่ 3','ดอกเบี้ยปีที่ 4']))return;
+  let N=Y*12;
+  let n=amorX(L,N,R,0,0,false,false),wy=amorX(L,N,R,ey,0,yr2y,false),wm=amorX(L,N,R,0,em,false,yr2m);
+  let nS=n.s,yS=wy.s,mS=wm.s;
+  let nY=byYr(nS),yY=byYr(yS),mY=byYr(mS);
+  let nTI=tI(nS),yTI=tI(yS),mTI=tI(mS),nI3=i3(nS),yI3=i3(yS),mI3=i3(mS);
+  let nP3=p3(nS),yP3=p3(yS),mP3=p3(mS),nM=pm(nS),yM=pm(yS),mM=pm(mS);
+  let nE3=eir3(nS),nE=eirF(nS),nE4=eir4(nS);
+  let yE3=ey>0?eir3(nS):0,mE3=em>0?eir3(nS):0,yE4=ey>0?eir4(nS):0,mE4=em>0?eir4(nS):0;
+  if(ey>0){let cf=[-L];for(let r of yS)cf.push(r.pmt);var yEF=irr(cf)*12}else{var yEF=0}
+  if(em>0){let cf=[-L];for(let r of mS)cf.push(r.pmt);var mEF=irr(cf)*12}else{var mEF=0}
+
+  // Recommendation from Recc Extrapay sheet
+  let ns=`แผนชำระปกติ: จะใช้เวลาผ่อนชำระทั้งหมด ${pt(nM)} โดยมีภาระดอกเบี้ยรวม ${fm(nTI)} บาท`;
+  let ys='',ms='';
+  if(ey>0)ys=`ผลจากการโปะรายปี (${fm(ey)} บาท/ปี): ใน 3 ปีแรก ช่วยประหยัดดอกเบี้ยได้ ${fm(nI3-yI3)} บาท และตัดเงินต้นเพิ่มขึ้น ${fm(yP3-nP3)} บาท. สำหรับระยะยาว จะประหยัดดอกเบี้ยรวมได้ ${fm(nTI-yTI)} บาท และผ่อนหมดเร็วขึ้น ${pt(nM-yM)}`;
+  if(em>0)ms=`ผลจากการโปะรายเดือน (${fm(em)} บาท/เดือน): ใน 3 ปีแรก ช่วยประหยัดดอกเบี้ยได้ ${fm(nI3-mI3)} บาท และตัดเงินต้นเพิ่มขึ้น ${fm(mP3-nP3)} บาท. สำหรับระยะยาว จะประหยัดดอกเบี้ยรวมได้ ${fm(nTI-mTI)} บาท และผ่อนหมดเร็วขึ้น ${pt(nM-mM)}`;
+
+  let h=`<div class="print-info">
+    <div class="pi-title">🏠 <span>จำลองการโปะหนี้สินเชื่อบ้าน</span></div>
+    <div class="pi-sub">Home Loan Calculator v1.0.2 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
+    <div class="pi-bar"><span>ยอดกู้: <b>${fm(L)} บาท</b></span><span>ระยะเวลา: <b>${Y} ปี</b></span><span>ดอกเบี้ย: <b>${(R[0]*100).toFixed(2)}/${(R[1]*100).toFixed(2)}/${(R[2]*100).toFixed(2)}/${(R[3]*100).toFixed(2)}%</b></span>${ey>0?'<span>โปะรายปี: <b>'+fm(ey)+' บาท</b></span>':''}${em>0?'<span>โปะรายเดือน: <b>'+fm(em)+' บาท</b></span>':''}</div>
+  </div>
+  <div class="rc"><h3>💡 สรุปภาพรวมสำหรับทีมขาย</h3>
+  <p><span class="bullet">•</span> ${ns}</p>
+  ${ys?'<p><span class="bullet">•</span> '+ys+'</p>':''}
+  ${ms?'<p><span class="bullet">•</span> '+ms+'</p>':''}</div>
+
+  <div class="st" style="margin-top:20px">📋 สรุปรายละเอียด</div>
+  <div class="g3">
+    <div class="sum-panel"><div class="panel-hdr normal">📄 ผ่อนปกติ</div>
+    ${sr('ยอดกู้',fm(L)+' บาท')}
+    ${sr('จำนวนปี',Y+' ปี')}
+    ${sr('ค่างวดต่อเดือน',fm(n.bp)+' บาท')}
+    ${sr('จำนวนปีที่ผ่อนจริง',pt(nM))}
+    ${sr('ดอกเบี้ยเฉลี่ย 3 ปี',fp((R[0]+R[1]+R[2])/3))}
+    ${sr('EIR 3 ปี',fp(nE3))}
+    ${sr('EIR 4 ปี',fp(nE4))}
+    ${sr('EIR ตลอดสัญญา',fp(nE))}
+    ${sr('ดอกเบี้ยรวม 3 ปี',fm(nI3)+' บาท')}
+    ${sr('เงินต้นที่ตัด 3 ปี',fm(nP3)+' บาท')}
+    ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(nTI)+' บาท')}
+    <div style="padding:0 12px 8px">${y3tb(nY)}</div></div>
+    ${ey>0?`<div class="sum-panel"><div class="panel-hdr yearly">💵 โปะรายปี (${fm(ey)}/ปี)</div>
+    ${sr('ยอดกู้',fm(L)+' บาท')}
+    ${sr('จำนวนปี',Y+' ปี')}
+    ${sr('ค่างวดต่อเดือน',fm(n.bp)+' บาท')}
+    ${sr('จำนวนปีที่ผ่อนจริง',pt(yM),'grn')}
+    ${sr('⚡ เร็วขึ้น',pt(nM-yM),'grn')}
+    ${sr('EIR 3 ปี',fp(yE3))}
+    ${sr('EIR 4 ปี',fp(yE4))}
+    ${sr('ดอกเบี้ยรวม 3 ปี',fm(yI3)+' บาท')}
+    ${sr('⚡ ประหยัดดอกเบี้ย 3 ปี',fm(nI3-yI3)+' บาท','grn')}
+    ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(yTI)+' บาท')}
+    ${sr('⚡ ประหยัดรวม',fm(nTI-yTI)+' บาท','grn')}
+    <div style="padding:0 12px 8px">${y3tb(yY)}</div></div>`:'<div></div>'}
+    ${em>0?`<div class="sum-panel"><div class="panel-hdr monthly">💵 โปะรายเดือน (${fm(em)}/ด.)</div>
+    ${sr('ยอดกู้',fm(L)+' บาท')}
+    ${sr('จำนวนปี',Y+' ปี')}
+    ${sr('ค่างวดต่อเดือน',fm(n.bp)+' บาท')}
+    ${sr('จำนวนปีที่ผ่อนจริง',pt(mM),'grn')}
+    ${sr('⚡ เร็วขึ้น',pt(nM-mM),'grn')}
+    ${sr('EIR 3 ปี',fp(mE3))}
+    ${sr('EIR 4 ปี',fp(mE4))}
+    ${sr('ดอกเบี้ยรวม 3 ปี',fm(mI3)+' บาท')}
+    ${sr('⚡ ประหยัดดอกเบี้ย 3 ปี',fm(nI3-mI3)+' บาท','grn')}
+    ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(mTI)+' บาท')}
+    ${sr('⚡ ประหยัดรวม',fm(nTI-mTI)+' บาท','grn')}
+    <div style="padding:0 12px 8px">${y3tb(mY)}</div></div>`:'<div></div>'}
+  </div>
+
+  <div class="st" style="margin-top:20px">📊 ตารางสรุปรายปี</div>
+  <div class="g3">
+    <div><div style="font-size:12px;color:var(--txt2);font-weight:700;margin-bottom:4px">📄 ปกติ</div><div class="tw" style="max-height:380px"><table><thead><tr><th>ปี</th><th>ดบ.</th><th>ผ่อน</th><th>ตัดดอก</th><th>ตัดต้น</th><th>คงเหลือ</th></tr></thead><tbody>${ytb(nY)}</tbody></table></div></div>
+    ${ey>0?`<div><div style="font-size:12px;color:var(--gld);font-weight:700;margin-bottom:4px">💵 โปะรายปี</div><div class="tw" style="max-height:380px"><table><thead><tr><th>ปี</th><th>ดบ.</th><th>ผ่อน</th><th>ตัดดอก</th><th>ตัดต้น</th><th>คงเหลือ</th></tr></thead><tbody>${ytb(yY)}</tbody></table></div></div>`:'<div></div>'}
+    ${em>0?`<div><div style="font-size:12px;color:var(--grn);font-weight:700;margin-bottom:4px">💵 โปะรายเดือน</div><div class="tw" style="max-height:380px"><table><thead><tr><th>ปี</th><th>ดบ.</th><th>ผ่อน</th><th>ตัดดอก</th><th>ตัดต้น</th><th>คงเหลือ</th></tr></thead><tbody>${ytb(mY)}</tbody></table></div></div>`:'<div></div>'}
+  </div>`;
+  h+=`<div class="disclaimer" style="background:rgba(100,116,139,.06);border:1px solid var(--brd);border-radius:var(--r);padding:16px 20px;margin-top:20px">
+<h4 style="font-size:13px;font-weight:700;color:var(--txt2);margin-bottom:8px">⚠️ ข้อควรทราบ</h4>
+<p style="font-size:12px;color:var(--mut);line-height:1.8;margin:0">- เอกสารฉบับนี้เป็นข้อมูลการนำเสนอสินเชื่อบ้านเบื้องต้น ทั้งนี้เงื่อนไขและรายละเอียดการกู้ให้เป็นไปตามสัญญาเงินกู้ที่ลูกค้าลงนามไว้กับธนาคาร<br>- การคำนวณนี้ ยังไม่รวมค่าธรรมเนียมอื่นๆ เช่น ค่าประเมิน, ค่าจดจำนอง หรือค่าประกัน<br>- สอบถามรายละเอียดเพิ่มเติมที่ K Contact Center หมายเลขโทรศัพท์ 0-2888-8888<br>- กรณีต้องการชำระแบบโปะ(ชำระเกินค่างวด) แนะนำให้ลูกค้าจ่ายชำระก่อนวันครบกำหนดประมาณ 1-2 วัน โดยวิธีการชำระให้นำค่างวดรวมกับยอดที่อยากจ่ายโปะเพิ่ม และให้ชำระเพียงครั้งเดียวโดยไม่แยกยอด ทั้งนี้ไม่แนะนำให้ชำระแบบโปะในวันครบกำหนดชำระค่างวด</p>
+</div>`;
+  document.getElementById('er').innerHTML=h;document.getElementById('er').classList.remove('hid');document.getElementById('er').scrollIntoView({behavior:'smooth'})
+}
+
+// Toggle flat/step PMT inputs
+function togPmt(prefix){
+  let mode=document.getElementById(prefix+'_t').value;
+  document.getElementById(prefix+'_fd').classList.toggle('hid',mode!=='flat');
+  document.getElementById(prefix+'_sd').classList.toggle('hid',mode!=='step');
+}
+
+// Validation helper
+function vld(ids,labels){
+  for(let i=0;i<ids.length;i++){
+    let v=pn(document.getElementById(ids[i]).value);
+    if(!v||v<=0){alert('กรุณากรอก '+labels[i]+' ให้ครบถ้วน');document.getElementById(ids[i]).focus();return false;}
+  }
+  return true;
+}
+
+
+// Print: clone results into a clean #print-area, print, then remove
+function doPrint(tab){
+  let resMap={calc:'cr',cmp:'mr',ext:'er'};
+  let resEl=document.getElementById(resMap[tab]);
+  if(!resEl||resEl.classList.contains('hid')){alert('กรุณาคำนวณผลลัพธ์ก่อนพิมพ์');return}
+
+  // Remove old print area if exists
+  let old=document.getElementById('print-area');
+  if(old)old.remove();
+
+  // Clone result content
+  let clone=resEl.cloneNode(true);
+  clone.classList.remove('hid');
+
+  // Remove .rc (sales recommendation) from clone
+  clone.querySelectorAll('.rc').forEach(el=>el.remove());
+
+  // Show .print-info in clone
+  clone.querySelectorAll('.print-info').forEach(el=>el.style.display='block');
+
+  // Build print area with inline styles for A4
+  let pa=document.createElement('div');
+  pa.id='print-area';
+  pa.innerHTML=buildPrintHTML(clone.innerHTML);
+  document.body.appendChild(pa);
+
+  window.print();
+  setTimeout(()=>{let p=document.getElementById('print-area');if(p)p.remove()},500);
+}
+
+function buildPrintHTML(content){
+  return `<style>
+    #print-area{font-family:'IBM Plex Sans Thai',sans-serif;font-size:8px;color:#1a1a1a;line-height:1.3}
+    #print-area .print-info{display:block;margin-bottom:4px}
+    #print-area .pi-title{font-size:12px;font-weight:700;text-align:center;margin-bottom:2px;padding-bottom:3px;border-bottom:2px solid #22d3a7;color:#0b1120}
+    #print-area .pi-title span{color:#0a8a6a}
+    #print-area .pi-sub{font-size:7px;text-align:center;color:#888;margin-bottom:3px}
+    #print-area .pi-bar{font-size:8px;color:#333;background:#f5f5f5;border:1px solid #ddd;border-radius:3px;padding:3px 8px;margin-bottom:4px;display:flex;flex-wrap:wrap;gap:2px 12px}
+    #print-area .pi-bar b{color:#0b1120}
+    #print-area .st{font-size:9px;font-weight:700;padding-bottom:2px;margin-bottom:3px;margin-top:5px;border-bottom:1px solid #ddd;color:#1a1a1a;display:flex;align-items:center;gap:4px}
+    #print-area .g2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+    #print-area .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+    #print-area .sum-panel{border:1px solid #ccc;border-radius:4px;background:#fff;margin-bottom:3px;overflow:hidden}
+    #print-area .panel-hdr{padding:2px 6px;font-size:8px;font-weight:700;border-bottom:1px solid #ddd;color:#1a1a1a}
+    #print-area .panel-hdr.flat,#print-area .panel-hdr.bank-a{border-top:2px solid #22d3a7}
+    #print-area .panel-hdr.step,#print-area .panel-hdr.bank-b{border-top:2px solid #38bdf8}
+    #print-area .panel-hdr.diff{border-top:2px solid #fb7185}
+    #print-area .panel-hdr.normal{border-top:2px solid #999}
+    #print-area .panel-hdr.yearly{border-top:2px solid #d4a017}
+    #print-area .panel-hdr.monthly{border-top:2px solid #22d3a7}
+    #print-area .sum-row{display:flex;justify-content:space-between;align-items:center;padding:1px 6px;border-bottom:1px solid #f0f0f0}
+    #print-area .sum-row:last-child{border-bottom:none}
+    #print-area .sum-row .lbl{font-size:7.5px;color:#444}
+    #print-area .sum-row .val{font-size:7.5px;font-weight:700;color:#1a1a1a}
+    #print-area .val.grn{color:#0a8a6a!important}
+    #print-area .val.blu{color:#1a7abf!important}
+    #print-area .val.gld{color:#b8860b!important}
+    #print-area .val.pnk{color:#d63384!important}
+    #print-area .pos{color:#0a8a6a!important}
+    #print-area .neg{color:#d63384!important}
+    #print-area .tw{max-height:none;overflow:visible;border:1px solid #ccc;border-radius:3px}
+    #print-area table{width:100%;border-collapse:collapse;font-size:7px}
+    #print-area .sum-panel table{font-size:6px!important;margin-top:1px!important;line-height:1.1!important}
+    #print-area .sum-panel table th{font-size:5.5px!important;padding:1px 2px!important;color:#888!important;font-weight:600!important;border-bottom:1px solid #ccc!important;background:#f8f8f8!important;text-align:right!important}
+    #print-area .sum-panel table td{font-size:6px!important;padding:1px 2px!important;color:#555!important;border-bottom:1px solid #eee!important;text-align:right!important}
+    #print-area .sum-panel table th:first-child,#print-area .sum-panel table td:first-child{text-align:center!important}
+    #print-area .sum-panel table th[style],#print-area .sum-panel table td[style]{font-size:6px!important;padding:1px 2px!important}
+    #print-area th{background:#f0f0f0;color:#1a1a1a;padding:1.5px 3px;font-size:6.5px;font-weight:700;text-align:right;border-bottom:1px solid #ccc}
+    #print-area td{padding:1px 3px;text-align:right;color:#333;border-bottom:1px solid #eee;font-size:7px}
+    #print-area th:first-child,#print-area td:first-child{text-align:center}
+    #print-area .bg-a,#print-area .bg-b,#print-area .bg-d{background:none;padding:0;color:inherit;font-weight:700}
+    #print-area .disclaimer{margin-top:4px;padding-top:3px;border-top:1px solid #ccc;background:none!important;border-radius:0!important;border-left:none!important;border-right:none!important;border-bottom:none!important;padding:3px 0 0 0!important}
+    #print-area .disclaimer h4{font-size:7px;font-weight:700;color:#666;margin:0 0 2px 0;display:block}
+    #print-area .disclaimer p{font-size:6.5px;color:#888;line-height:1.5;margin:0;display:block}
+    #print-area .hid{display:none}
+    #print-area .accent{color:#0a8a6a}
+  </style>${content}`;
+}
+
+</script>
+</body>
+</html>
