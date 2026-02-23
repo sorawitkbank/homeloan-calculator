@@ -69,8 +69,8 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(
 .rc .bullet{color:var(--gld);margin-right:4px}
 
 /* SUMMARY TABLE (like screenshot) */
-.sum-panel{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);overflow:hidden}
-.sum-panel .panel-hdr{padding:14px 20px;font-size:15px;font-weight:700;border-bottom:1px solid var(--brd)}
+.sum-panel{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);overflow:visible}
+.sum-panel .panel-hdr{padding:14px 20px;font-size:15px;font-weight:700;border-bottom:1px solid var(--brd);border-radius:var(--r) var(--r) 0 0}
 .sum-panel .panel-hdr.flat{color:var(--grn);border-top:3px solid var(--grn)}
 .sum-panel .panel-hdr.step{color:var(--blu);border-top:3px solid var(--blu)}
 .sum-panel .panel-hdr.normal{color:var(--txt2);border-top:3px solid var(--mut)}
@@ -109,6 +109,8 @@ table th:first-child,table td:first-child{text-align:center}
 .bg-d{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(251,113,133,.1);color:var(--pnk);letter-spacing:.3px}
 .ext-inp{padding:10px 14px;border:1px solid var(--brd);border-radius:var(--r2);background:var(--inp);color:var(--txt);font-family:"IBM Plex Sans Thai",sans-serif;font-size:14px;width:100%;transition:all .2s}
 .ext-inp:focus{outline:0;border-color:var(--grn);box-shadow:0 0 0 3px rgba(34,211,167,.1)}
+.y3w{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+.y3t{width:100%;margin-top:4px;font-size:8px;border-collapse:collapse;table-layout:fixed}
 .hid{display:none!important}
 
 @media(max-width:768px){
@@ -141,15 +143,15 @@ table th:first-child,table td:first-child{text-align:center}
   .b1,.b2,.btn-print{width:100%;text-align:center;padding:14px;font-size:15px}
 
   /* Summary panels */
-  .sum-panel{overflow:visible!important}
   .sum-panel .panel-hdr{padding:10px 14px;font-size:13px}
   .sum-row{padding:8px 14px}
   .sum-row .lbl{font-size:11px}
   .sum-row .val{font-size:12px;max-width:55%;text-align:right;word-break:break-word}
 
-  /* Mini 3yr table inside panels - allow scroll */
-  .sum-panel table{font-size:9px!important;min-width:300px!important}
-  .sum-panel table th,.sum-panel table td{padding:3px 2px!important;font-size:9px!important}
+  /* Mini 3yr table inside panels */
+  .y3t{font-size:7.5px!important;table-layout:fixed!important}
+  .y3t th,.y3t td{padding:2px 2px!important;font-size:7.5px!important}
+  .y3w{margin:0!important;padding:0!important}
 
   /* Data tables: horizontal scroll */
   .tw{max-height:350px;overflow:auto;-webkit-overflow-scrolling:touch}
@@ -360,9 +362,9 @@ function ytb(yd){let h='';let ks=Object.keys(yd).map(Number).sort((a,b)=>a-b);fo
 
 // Mini 3-year summary table for inside summary panels
 function y3tb(yd){
-  let ths='padding:2px 4px;text-align:right;font-size:9px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd)';
-  let tds='padding:2px 4px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);color:var(--txt2);font-size:9px';
-  let h='<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse;min-width:320px"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center;white-space:nowrap">ปี</th><th style="'+ths+';white-space:nowrap">ดอกเบี้ย</th><th style="'+ths+';white-space:nowrap">ตัดดอกเบี้ย</th><th style="'+ths+';white-space:nowrap">ตัดเงินต้น</th><th style="'+ths+';white-space:nowrap">คงเหลือ</th></tr></thead><tbody>';
+  let ths='padding:2px 3px;text-align:right;font-size:8px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd);white-space:nowrap';
+  let tds='padding:2px 3px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);color:var(--txt2);font-size:8px;white-space:nowrap';
+  let h='<div class="y3w"><table class="y3t"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center;width:8%">ปี</th><th style="'+ths+';width:18%">ดอกเบี้ย</th><th style="'+ths+';width:24%">ตัดดอกเบี้ย</th><th style="'+ths+';width:24%">ตัดเงินต้น</th><th style="'+ths+';width:26%">คงเหลือ</th></tr></thead><tbody>';
   for(let y=1;y<=3;y++){
     let d=yd[y];
     if(!d) continue;
@@ -374,13 +376,13 @@ function y3tb(yd){
 
 // Diff 3-year table (B-A) for compare diff panel
 function y3df(aYd,bYd){
-  let ths='padding:2px 4px;text-align:right;font-size:9px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd)';
-  let h='<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse;min-width:320px"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center;white-space:nowrap">ปี</th><th style="'+ths+';white-space:nowrap">ดอกเบี้ย</th><th style="'+ths+';white-space:nowrap">ตัดดอกเบี้ย</th><th style="'+ths+';white-space:nowrap">ตัดเงินต้น</th><th style="'+ths+';white-space:nowrap">คงเหลือ</th></tr></thead><tbody>';
+  let ths='padding:2px 3px;text-align:right;font-size:8px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd);white-space:nowrap';
+  let h='<div class="y3w"><table class="y3t"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center;width:8%">ปี</th><th style="'+ths+';width:18%">ดอกเบี้ย</th><th style="'+ths+';width:24%">ตัดดอกเบี้ย</th><th style="'+ths+';width:24%">ตัดเงินต้น</th><th style="'+ths+';width:26%">คงเหลือ</th></tr></thead><tbody>';
   for(let y=1;y<=3;y++){
     let a=aYd[y],b=bYd[y];
     if(!a||!b) continue;
     let di=b.i-a.i,dp=b.pr-a.pr,db=b.b-a.b,dr=b.r-a.r;
-    let tds='padding:2px 4px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);font-size:9px';
+    let tds='padding:2px 3px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);font-size:8px;white-space:nowrap';
     let cc=function(v){return v>0?'color:var(--grn)':v<0?'color:var(--pnk)':'color:var(--txt2)'};
     h+='<tr><td style="'+tds+';text-align:center;color:var(--txt2)">'+y+'</td>';
     h+='<td style="'+tds+';'+cc(dr)+'">'+(dr>=0?'+':'')+(dr*100).toFixed(2)+'%</td>';
@@ -788,6 +790,8 @@ function buildPrintHTML(content){
     #print-area .sum-panel table td{font-size:6px!important;padding:1px 2px!important;color:#555!important;border-bottom:1px solid #eee!important;text-align:right!important}
     #print-area .sum-panel table th:first-child,#print-area .sum-panel table td:first-child{text-align:center!important}
     #print-area .sum-panel table th[style],#print-area .sum-panel table td[style]{font-size:6px!important;padding:1px 2px!important}
+    #print-area .y3w{overflow:visible!important}
+    #print-area .y3t{table-layout:fixed!important;font-size:6px!important}
     #print-area th{background:#f0f0f0;color:#1a1a1a;padding:1.5px 3px;font-size:6.5px;font-weight:700;text-align:right;border-bottom:1px solid #ccc}
     #print-area td{padding:1px 3px;text-align:right;color:#333;border-bottom:1px solid #eee;font-size:7px}
     #print-area th:first-child,#print-area td:first-child{text-align:center}
