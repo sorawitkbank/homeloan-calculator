@@ -141,14 +141,15 @@ table th:first-child,table td:first-child{text-align:center}
   .b1,.b2,.btn-print{width:100%;text-align:center;padding:14px;font-size:15px}
 
   /* Summary panels */
+  .sum-panel{overflow:visible!important}
   .sum-panel .panel-hdr{padding:10px 14px;font-size:13px}
   .sum-row{padding:8px 14px}
   .sum-row .lbl{font-size:11px}
   .sum-row .val{font-size:12px;max-width:55%;text-align:right;word-break:break-word}
 
-  /* Mini 3yr table inside panels */
-  .sum-panel table{font-size:10px!important}
-  .sum-panel table th,.sum-panel table td{padding:4px 3px!important}
+  /* Mini 3yr table inside panels - allow scroll */
+  .sum-panel table{font-size:9px!important;min-width:300px!important}
+  .sum-panel table th,.sum-panel table td{padding:3px 2px!important;font-size:9px!important}
 
   /* Data tables: horizontal scroll */
   .tw{max-height:350px;overflow:auto;-webkit-overflow-scrolling:touch}
@@ -361,20 +362,20 @@ function ytb(yd){let h='';let ks=Object.keys(yd).map(Number).sort((a,b)=>a-b);fo
 function y3tb(yd){
   let ths='padding:2px 4px;text-align:right;font-size:9px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd)';
   let tds='padding:2px 4px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);color:var(--txt2);font-size:9px';
-  let h='<table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center">ปี</th><th style="'+ths+'">อัตราดอกเบี้ย</th><th style="'+ths+'">ตัดดอกเบี้ย</th><th style="'+ths+'">ตัดเงินต้น</th><th style="'+ths+'">ยอดคงเหลือ</th></tr></thead><tbody>';
+  let h='<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse;min-width:320px"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center;white-space:nowrap">ปี</th><th style="'+ths+';white-space:nowrap">ดอกเบี้ย</th><th style="'+ths+';white-space:nowrap">ตัดดอกเบี้ย</th><th style="'+ths+';white-space:nowrap">ตัดเงินต้น</th><th style="'+ths+';white-space:nowrap">คงเหลือ</th></tr></thead><tbody>';
   for(let y=1;y<=3;y++){
     let d=yd[y];
     if(!d) continue;
     h+='<tr><td style="'+tds+';text-align:center">'+y+'</td><td style="'+tds+'">'+(d.r*100).toFixed(2)+'%</td><td style="'+tds+'">'+fm(d.i)+'</td><td style="'+tds+'">'+fm(d.pr)+'</td><td style="'+tds+'">'+fm(Math.max(0,d.b))+'</td></tr>';
   }
-  h+='</tbody></table>';
+  h+='</tbody></table></div>';
   return h;
 }
 
 // Diff 3-year table (B-A) for compare diff panel
 function y3df(aYd,bYd){
   let ths='padding:2px 4px;text-align:right;font-size:9px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd)';
-  let h='<table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center">ปี</th><th style="'+ths+'">อัตราดอกเบี้ย</th><th style="'+ths+'">ตัดดอกเบี้ย</th><th style="'+ths+'">ตัดเงินต้น</th><th style="'+ths+'">ยอดคงเหลือ</th></tr></thead><tbody>';
+  let h='<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse;min-width:320px"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center;white-space:nowrap">ปี</th><th style="'+ths+';white-space:nowrap">ดอกเบี้ย</th><th style="'+ths+';white-space:nowrap">ตัดดอกเบี้ย</th><th style="'+ths+';white-space:nowrap">ตัดเงินต้น</th><th style="'+ths+';white-space:nowrap">คงเหลือ</th></tr></thead><tbody>';
   for(let y=1;y<=3;y++){
     let a=aYd[y],b=bYd[y];
     if(!a||!b) continue;
@@ -387,7 +388,7 @@ function y3df(aYd,bYd){
     h+='<td style="'+tds+';'+cc(dp)+'">'+fm(dp)+'</td>';
     h+='<td style="'+tds+';'+cc(-db)+'">'+fm(db)+'</td></tr>';
   }
-  h+='</tbody></table>';
+  h+='</tbody></table></div>';
   return h;
 }
 
