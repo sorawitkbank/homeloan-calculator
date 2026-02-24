@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>โปรแกรมคำนวณสินเชื่อบ้าน v1.0.2</title>
+<title>โปรแกรมคำนวณสินเชื่อบ้าน v1.0.3</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -14,6 +14,32 @@
   --glow-grn:0 0 20px rgba(34,211,167,.08);
   --glow-blu:0 0 20px rgba(56,189,248,.08);
 }
+
+[data-theme="light"]{
+  --bg:#f5f0e8;--bg2:#ede8df;--card:#ffffff;--card2:#faf7f2;
+  --inp:#ffffff;--grn:#1a6b4e;--blu:#2563eb;--gld:#b8860b;
+  --pnk:#be123c;--org:#c2410c;--txt:#1a1a1a;--txt2:#4a4a4a;
+  --mut:#7a7a7a;--brd:#d9d3c7;--brd2:#c4bdb0;
+  --glow-grn:0 0 20px rgba(26,107,78,.06);
+  --glow-blu:0 0 20px rgba(37,99,235,.06);
+}
+[data-theme="light"] .hdr h1 span{background:none;-webkit-background-clip:unset;-webkit-text-fill-color:var(--grn)}
+[data-theme="light"] .tab.on{background:rgba(26,107,78,.08);border-color:rgba(26,107,78,.25)}
+[data-theme="light"] .b1{background:linear-gradient(135deg,#1a6b4e,#22845e);color:#fff}
+[data-theme="light"] .b1:hover{box-shadow:0 6px 24px rgba(26,107,78,.2)}
+[data-theme="light"] .rc{background:linear-gradient(135deg,rgba(184,134,11,.06),rgba(194,65,12,.03));border-color:rgba(184,134,11,.2)}
+[data-theme="light"] .bg-a{background:rgba(26,107,78,.1)}
+[data-theme="light"] .bg-b{background:rgba(37,99,235,.1)}
+[data-theme="light"] .bg-d{background:rgba(190,18,60,.08)}
+[data-theme="light"] .sum-row:hover{background:rgba(26,107,78,.03)}
+[data-theme="light"] table th{background:#ede8df;color:#1a6b4e}
+[data-theme="light"] table tr:hover td{background:rgba(26,107,78,.03)}
+[data-theme="light"] .tw::-webkit-scrollbar-track{background:#ede8df}
+[data-theme="light"] .tw::-webkit-scrollbar-thumb{background:#c4bdb0}
+[data-theme="light"] .btn-print{border-color:var(--grn);background:rgba(26,107,78,.06);color:var(--grn)}
+[data-theme="light"] .btn-print:hover{background:rgba(26,107,78,.12)}
+[data-theme="light"] .sum-row{border-bottom-color:#e8e3da}
+[data-theme="light"] .ig input:focus,[data-theme="light"] .ig select:focus,[data-theme="light"] .rg input:focus{box-shadow:0 0 0 3px rgba(26,107,78,.1)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;line-height:1.7}
 
@@ -69,8 +95,8 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(
 .rc .bullet{color:var(--gld);margin-right:4px}
 
 /* SUMMARY TABLE (like screenshot) */
-.sum-panel{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);overflow:visible}
-.sum-panel .panel-hdr{padding:14px 20px;font-size:15px;font-weight:700;border-bottom:1px solid var(--brd);border-radius:var(--r) var(--r) 0 0}
+.sum-panel{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);overflow:hidden}
+.sum-panel .panel-hdr{padding:14px 20px;font-size:15px;font-weight:700;border-bottom:1px solid var(--brd)}
 .sum-panel .panel-hdr.flat{color:var(--grn);border-top:3px solid var(--grn)}
 .sum-panel .panel-hdr.step{color:var(--blu);border-top:3px solid var(--blu)}
 .sum-panel .panel-hdr.normal{color:var(--txt2);border-top:3px solid var(--mut)}
@@ -79,7 +105,7 @@ body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(
 .sum-panel .panel-hdr.bank-a{color:var(--grn);border-top:3px solid var(--grn)}
 .sum-panel .panel-hdr.bank-b{color:var(--blu);border-top:3px solid var(--blu)}
 .sum-panel .panel-hdr.diff{color:var(--pnk);border-top:3px solid var(--pnk)}
-.sum-row{display:flex;justify-content:space-between;align-items:center;padding:11px 20px;border-bottom:1px solid rgba(30,41,59,.7);transition:background .15s}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:11px 20px;border-bottom:1px solid var(--brd);transition:background .15s}
 .sum-row:hover{background:rgba(34,211,167,.02)}
 .sum-row:last-child{border-bottom:none}
 .sum-row .lbl{font-size:13px;color:var(--txt2);font-weight:400}
@@ -107,10 +133,6 @@ table th:first-child,table td:first-child{text-align:center}
 .bg-a{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(34,211,167,.1);color:var(--grn);letter-spacing:.3px}
 .bg-b{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(56,189,248,.1);color:var(--blu);letter-spacing:.3px}
 .bg-d{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(251,113,133,.1);color:var(--pnk);letter-spacing:.3px}
-.ext-inp{padding:10px 14px;border:1px solid var(--brd);border-radius:var(--r2);background:var(--inp);color:var(--txt);font-family:"IBM Plex Sans Thai",sans-serif;font-size:14px;width:100%;transition:all .2s}
-.ext-inp:focus{outline:0;border-color:var(--grn);box-shadow:0 0 0 3px rgba(34,211,167,.1)}
-.y3w{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
-.y3t{width:100%;margin-top:4px;font-size:8px;border-collapse:collapse;table-layout:fixed}
 .hid{display:none!important}
 
 @media(max-width:768px){
@@ -143,15 +165,15 @@ table th:first-child,table td:first-child{text-align:center}
   .b1,.b2,.btn-print{width:100%;text-align:center;padding:14px;font-size:15px}
 
   /* Summary panels */
-  .sum-panel .panel-hdr{padding:10px 14px;font-size:13px}
+  .sum-panel{overflow:visible!important}
+  .sum-panel .panel-hdr{padding:10px 14px;font-size:13px;border-radius:var(--r) var(--r) 0 0}
   .sum-row{padding:8px 14px}
   .sum-row .lbl{font-size:11px}
   .sum-row .val{font-size:12px;max-width:55%;text-align:right;word-break:break-word}
 
-  /* Mini 3yr table inside panels */
-  .y3t{font-size:7.5px!important;table-layout:fixed!important}
-  .y3t th,.y3t td{padding:2px 2px!important;font-size:7.5px!important}
-  .y3w{margin:0!important;padding:0!important}
+  /* Mini 3yr table inside panels - fixed layout to fit */
+  .sum-panel table{font-size:8px!important;table-layout:fixed!important}
+  .sum-panel table th,.sum-panel table td{padding:2px 2px!important;font-size:8px!important;white-space:nowrap!important;overflow:hidden!important}
 
   /* Data tables: horizontal scroll */
   .tw{max-height:350px;overflow:auto;-webkit-overflow-scrolling:touch}
@@ -173,11 +195,14 @@ table th:first-child,table td:first-child{text-align:center}
   /* Compare tab: inputs inside card */
   .cd .g2{gap:10px!important}
 
-  /* Extra pay inputs */
-  .ext-inp{font-size:16px!important;padding:12px 10px!important}
-
   /* Extra pay checkbox labels */
   .cd label[style*="cursor:pointer"]{font-size:11px!important}
+
+  /* Extra pay inputs */
+  #t-ext .g2 input[style]{font-size:16px!important;padding:12px 10px!important}
+
+  /* Theme toggle */
+  .theme-btn{width:36px!important;height:36px!important;font-size:18px!important}
 
   /* Disclaimer */
   .disclaimer p{font-size:10px!important;line-height:1.6!important}
@@ -193,8 +218,11 @@ table th:first-child,table td:first-child{text-align:center}
 /* PRINT: hide everything, show only #print-area */
 .print-info{display:none}
 #print-area{display:none}
+.no-print{}
+
 @media print{
   body>*:not(#print-area){display:none!important}
+  .no-print{display:none!important}
   #print-area{display:block!important;background:#fff!important;color:#1a1a1a!important;font-family:'IBM Plex Sans Thai',sans-serif!important;font-size:9px!important;line-height:1.5!important}
   #print-area *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   @page{size:A4 portrait;margin:8mm}
@@ -202,9 +230,12 @@ table th:first-child,table td:first-child{text-align:center}
 </style>
 </head>
 <body>
-<div class="hdr">
-  <h1>🏠 <span>โปรแกรมคำนวณสินเชื่อบ้าน</span></h1>
-  <div class="sub">Home Loan Calculator v1.0.2 &nbsp;|&nbsp; MRR = 6.68% &nbsp;|&nbsp; Cushion Rate = 0.25%</div>
+<div class="hdr" style="display:flex;align-items:center;justify-content:space-between">
+  <div>
+    <h1>🏠 <span>โปรแกรมคำนวณสินเชื่อบ้าน</span></h1>
+    <div class="sub">Home Loan Calculator v1.0.3 &nbsp;|&nbsp; MRR = 6.68% &nbsp;|&nbsp; Cushion Rate = 0.25%</div>
+  </div>
+  <button class="theme-btn no-print" onclick="togTheme()" title="สลับ Light/Dark" style="width:42px;height:42px;border-radius:50%;border:1px solid var(--brd2);background:var(--card);color:var(--txt);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;flex-shrink:0" id="themeBtn">🌙</button>
 </div>
 <div class="tabs">
   <button class="tab on" onclick="sw('calc',this)">📊 คำนวณค่างวด</button>
@@ -295,8 +326,8 @@ table th:first-child,table td:first-child{text-align:center}
     <div class="rg"><div><div class="rh">ปี 1</div><input id="e_r1" value="2.99"></div><div><div class="rh">ปี 2</div><input id="e_r2" value="4.40"></div><div><div class="rh">ปี 3</div><input id="e_r3" value="4.95"></div><div><div class="rh">>= ปี 4</div><input id="e_r4" value="6.05"></div></div>
   </div>
   <div style="margin-top:16px" class="g2">
-    <div><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:4px">💵 โปะรายปี (บาท/ปี)</label><input id="e_ey" value="100,000" oninput="fn(this)" class="ext-inp"><label style="font-size:11px;color:var(--txt2);cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:6px"><input type="checkbox" id="e_yr2y" checked style="accent-color:var(--gld);width:15px;height:15px"> เริ่มโปะปีที่ 2 (งวดที่ 24)</label></div>
-    <div><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:4px">💵 โปะรายเดือน (บาท/เดือน)</label><input id="e_em" value="5,000" oninput="fn(this)" class="ext-inp"><label style="font-size:11px;color:var(--txt2);cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:6px"><input type="checkbox" id="e_yr2m" checked style="accent-color:var(--grn);width:15px;height:15px"> เริ่มโปะปีที่ 2 (งวดที่ 13)</label></div>
+    <div><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:4px">💵 โปะรายปี (บาท/ปี)</label><input id="e_ey" value="100,000" oninput="fn(this)" style="padding:10px 14px;border:1px solid var(--brd);border-radius:var(--r2);background:var(--inp);color:var(--txt);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;width:100%"><label style="font-size:11px;color:var(--txt2);cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:6px"><input type="checkbox" id="e_yr2y" checked style="accent-color:var(--gld);width:15px;height:15px"> เริ่มโปะปีที่ 2 (งวดที่ 24)</label></div>
+    <div><label style="font-size:12px;font-weight:600;color:var(--txt2);display:block;margin-bottom:4px">💵 โปะรายเดือน (บาท/เดือน)</label><input id="e_em" value="5,000" oninput="fn(this)" style="padding:10px 14px;border:1px solid var(--brd);border-radius:var(--r2);background:var(--inp);color:var(--txt);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;width:100%"><label style="font-size:11px;color:var(--txt2);cursor:pointer;display:flex;align-items:center;gap:5px;margin-top:6px"><input type="checkbox" id="e_yr2m" checked style="accent-color:var(--grn);width:15px;height:15px"> เริ่มโปะปีที่ 2 (งวดที่ 13)</label></div>
   </div>
 
   <div class="br">
@@ -338,10 +369,11 @@ function amor(P,N,R,mode,mp,flatPmt){
 
 function amorX(P,N,R,ey,em,yr2y,yr2m){
   let[r1,r2,r3,r4]=R,bp=rup(PMT((r4+CSH)/12,N,P)),s=[],b=P;
-  let emStart=yr2m?13:1,eyStart=yr2y?24:12;
+  let emStart=yr2m?13:1;
   for(let m=1;m<=N+300;m++){if(b<=.5)break;let y=Math.ceil(m/12),r=gr(m,r1,r2,r3,r4),i=b*(r/12);
-  let p=bp,ex=0;if(em>0&&m>=emStart)ex+=em;if(ey>0&&m>=eyStart&&m%12===0)ex+=ey;p+=ex;
-  if(b+i<p)p=b+i;let pr=p-i;if(pr<0)pr=0;b-=pr;if(b<.5)b=0;
+  let p=bp,ex=0;if(em>0&&m>=emStart)ex+=em;
+  if(ey>0){if(!yr2y&&(m-1)%12===0)ex+=ey;else if(yr2y&&m>=13&&(m-13)%12===0)ex+=ey}
+  p+=ex;if(b+i<p)p=b+i;let pr=p-i;if(pr<0)pr=0;b-=pr;if(b<.5)b=0;
   s.push({m,y,r,pmt:p,int:i,prn:pr,bal:b,ex})}
   return{s,bp}
 }
@@ -357,32 +389,33 @@ function irr(cf){let g=.005;for(let i=0;i<200;i++){let n=0,d=0;for(let j=0;j<cf.
 function eir3(s){if(s.length<2)return 0;let P=s[0].bal+s[0].prn;let bp=s[0].pmt;let rem=s[Math.min(35,s.length-1)].bal;return xlRATE(Math.min(36,s.length),-bp,P,-rem)*12}
 function eir4(s){if(s.length<2)return 0;let P=s[0].bal+s[0].prn;let bp=s[0].pmt;let rem=s[Math.min(47,s.length-1)].bal;return xlRATE(Math.min(48,s.length),-bp,P,-rem)*12}
 function eirF(s){if(s.length<2)return 0;let P=s[0].bal+s[0].prn,cf=[-P];for(let r of s)cf.push(r.pmt);return irr(cf)*12}
+function eirN(s,months){if(s.length<2)return 0;let P=s[0].bal+s[0].prn,cf=[-P],n=Math.min(months,s.length);for(let i=0;i<n;i++)cf.push(s[i].pmt);if(n<=s.length&&s[n-1].bal>0)cf[n]+=s[n-1].bal;return irr(cf)*12}
 
 function ytb(yd){let h='';let ks=Object.keys(yd).map(Number).sort((a,b)=>a-b);for(let y of ks){let d=yd[y];if(d.i===0&&d.pr===0)continue;h+=`<tr><td>${y}</td><td>${(d.r*100).toFixed(2)}%</td><td>${fm(d.p)}</td><td>${fm(d.i)}</td><td>${fm(d.pr)}</td><td>${fm(Math.max(0,d.b))}</td></tr>`}return h}
 
 // Mini 3-year summary table for inside summary panels
 function y3tb(yd){
-  let ths='padding:2px 3px;text-align:right;font-size:8px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd);white-space:nowrap';
-  let tds='padding:2px 3px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);color:var(--txt2);font-size:8px;white-space:nowrap';
-  let h='<div class="y3w"><table class="y3t"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center;width:8%">ปี</th><th style="'+ths+';width:18%">ดอกเบี้ย</th><th style="'+ths+';width:24%">ตัดดอกเบี้ย</th><th style="'+ths+';width:24%">ตัดเงินต้น</th><th style="'+ths+';width:26%">คงเหลือ</th></tr></thead><tbody>';
+  let ths='padding:2px 4px;text-align:right;font-size:9px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd)';
+  let tds='padding:2px 4px;text-align:right;border-bottom:1px solid var(--brd);color:var(--txt2);font-size:9px';
+  let h='<table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse"><thead><tr style="background:var(--bg2)"><th style="'+ths+';text-align:center">ปี</th><th style="'+ths+'">อัตราดอกเบี้ย</th><th style="'+ths+'">ตัดดอกเบี้ย</th><th style="'+ths+'">ตัดเงินต้น</th><th style="'+ths+'">ยอดคงเหลือ</th></tr></thead><tbody>';
   for(let y=1;y<=3;y++){
     let d=yd[y];
     if(!d) continue;
     h+='<tr><td style="'+tds+';text-align:center">'+y+'</td><td style="'+tds+'">'+(d.r*100).toFixed(2)+'%</td><td style="'+tds+'">'+fm(d.i)+'</td><td style="'+tds+'">'+fm(d.pr)+'</td><td style="'+tds+'">'+fm(Math.max(0,d.b))+'</td></tr>';
   }
-  h+='</tbody></table></div>';
+  h+='</tbody></table>';
   return h;
 }
 
 // Diff 3-year table (B-A) for compare diff panel
 function y3df(aYd,bYd){
-  let ths='padding:2px 3px;text-align:right;font-size:8px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd);white-space:nowrap';
-  let h='<div class="y3w"><table class="y3t"><thead><tr style="background:rgba(255,255,255,.03)"><th style="'+ths+';text-align:center;width:8%">ปี</th><th style="'+ths+';width:18%">ดอกเบี้ย</th><th style="'+ths+';width:24%">ตัดดอกเบี้ย</th><th style="'+ths+';width:24%">ตัดเงินต้น</th><th style="'+ths+';width:26%">คงเหลือ</th></tr></thead><tbody>';
+  let ths='padding:2px 4px;text-align:right;font-size:9px;color:var(--mut);font-weight:600;border-bottom:1px solid var(--brd)';
+  let h='<table style="width:100%;margin-top:4px;font-size:9px;border-collapse:collapse"><thead><tr style="background:var(--bg2)"><th style="'+ths+';text-align:center">ปี</th><th style="'+ths+'">อัตราดอกเบี้ย</th><th style="'+ths+'">ตัดดอกเบี้ย</th><th style="'+ths+'">ตัดเงินต้น</th><th style="'+ths+'">ยอดคงเหลือ</th></tr></thead><tbody>';
   for(let y=1;y<=3;y++){
     let a=aYd[y],b=bYd[y];
     if(!a||!b) continue;
     let di=b.i-a.i,dp=b.pr-a.pr,db=b.b-a.b,dr=b.r-a.r;
-    let tds='padding:2px 3px;text-align:right;border-bottom:1px solid rgba(30,41,59,.4);font-size:8px;white-space:nowrap';
+    let tds='padding:2px 4px;text-align:right;border-bottom:1px solid var(--brd);font-size:9px';
     let cc=function(v){return v>0?'color:var(--grn)':v<0?'color:var(--pnk)':'color:var(--txt2)'};
     h+='<tr><td style="'+tds+';text-align:center;color:var(--txt2)">'+y+'</td>';
     h+='<td style="'+tds+';'+cc(dr)+'">'+(dr>=0?'+':'')+(dr*100).toFixed(2)+'%</td>';
@@ -390,7 +423,7 @@ function y3df(aYd,bYd){
     h+='<td style="'+tds+';'+cc(dp)+'">'+fm(dp)+'</td>';
     h+='<td style="'+tds+';'+cc(-db)+'">'+fm(db)+'</td></tr>';
   }
-  h+='</tbody></table></div>';
+  h+='</tbody></table>';
   return h;
 }
 
@@ -453,7 +486,7 @@ function doCalc(){
   let h=`
   <div class="print-info">
     <div class="pi-title">🏠 <span>โปรแกรมคำนวณสินเชื่อบ้าน</span></div>
-    <div class="pi-sub">Home Loan Calculator v1.0.2 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
+    <div class="pi-sub">Home Loan Calculator v1.0.3 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
     <div class="pi-bar"><span>ยอดกู้: <b>${fm(L)} บาท</b></span><span>ระยะเวลา: <b>${Y} ปี</b></span><span>ดอกเบี้ย: <b>${(R[0]*100).toFixed(2)}% / ${(R[1]*100).toFixed(2)}% / ${(R[2]*100).toFixed(2)}% / ${(R[3]*100).toFixed(2)}%</b> (ปี 1/2/3/4+)</span></div>
   </div>
   <div class="rc">
@@ -554,7 +587,7 @@ function doCmp(){
 
   let h=`<div class="print-info">
     <div class="pi-title">🏠 <span>เปรียบเทียบสินเชื่อบ้าน</span></div>
-    <div class="pi-sub">Home Loan Calculator v1.0.2 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
+    <div class="pi-sub">Home Loan Calculator v1.0.3 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
     <div class="pi-bar"><span><b>A:</b> ${fm(aL)} บาท / ${aY} ปี / ${aT==='flat'?'คงที่':'ขั้นบันได'} / ดบ. ${(aR[0]*100).toFixed(2)}/${(aR[1]*100).toFixed(2)}/${(aR[2]*100).toFixed(2)}/${(aR[3]*100).toFixed(2)}%</span><span><b>B:</b> ${fm(bL)} บาท / ${bY} ปี / ${bT==='flat'?'คงที่':'ขั้นบันได'} / ดบ. ${(bR[0]*100).toFixed(2)}/${(bR[1]*100).toFixed(2)}/${(bR[2]*100).toFixed(2)}/${(bR[3]*100).toFixed(2)}%</span></div>
   </div>
   <div class="rc"><h3>💡 สรุปภาพรวมสำหรับทีมขาย</h3>
@@ -630,9 +663,9 @@ function doExt(){
   let nTI=tI(nS),yTI=tI(yS),mTI=tI(mS),nI3=i3(nS),yI3=i3(yS),mI3=i3(mS);
   let nP3=p3(nS),yP3=p3(yS),mP3=p3(mS),nM=pm(nS),yM=pm(yS),mM=pm(mS);
   let nE3=eir3(nS),nE=eirF(nS),nE4=eir4(nS);
-  let yE3=ey>0?eir3(nS):0,mE3=em>0?eir3(nS):0,yE4=ey>0?eir4(nS):0,mE4=em>0?eir4(nS):0;
-  if(ey>0){let cf=[-L];for(let r of yS)cf.push(r.pmt);var yEF=irr(cf)*12}else{var yEF=0}
-  if(em>0){let cf=[-L];for(let r of mS)cf.push(r.pmt);var mEF=irr(cf)*12}else{var mEF=0}
+  let yE3=ey>0?eirN(yS,36):0,mE3=em>0?eirN(mS,36):0,yE4=ey>0?eirN(yS,48):0,mE4=em>0?eirN(mS,48):0;
+  let yEF=ey>0?eirF(yS):0,mEF=em>0?eirF(mS):0;
+  let avg3=(R[0]+R[1]+R[2])/3;
 
   // Recommendation from Recc Extrapay sheet
   let ns=`แผนชำระปกติ: จะใช้เวลาผ่อนชำระทั้งหมด ${pt(nM)} โดยมีภาระดอกเบี้ยรวม ${fm(nTI)} บาท`;
@@ -642,7 +675,7 @@ function doExt(){
 
   let h=`<div class="print-info">
     <div class="pi-title">🏠 <span>จำลองการโปะหนี้สินเชื่อบ้าน</span></div>
-    <div class="pi-sub">Home Loan Calculator v1.0.2 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
+    <div class="pi-sub">Home Loan Calculator v1.0.3 | MRR = 6.68% | Cushion Rate = 0.25% | วันที่ ${new Date().toLocaleDateString('th-TH')}</div>
     <div class="pi-bar"><span>ยอดกู้: <b>${fm(L)} บาท</b></span><span>ระยะเวลา: <b>${Y} ปี</b></span><span>ดอกเบี้ย: <b>${(R[0]*100).toFixed(2)}/${(R[1]*100).toFixed(2)}/${(R[2]*100).toFixed(2)}/${(R[3]*100).toFixed(2)}%</b></span>${ey>0?'<span>โปะรายปี: <b>'+fm(ey)+' บาท</b></span>':''}${em>0?'<span>โปะรายเดือน: <b>'+fm(em)+' บาท</b></span>':''}</div>
   </div>
   <div class="rc"><h3>💡 สรุปภาพรวมสำหรับทีมขาย</h3>
@@ -671,8 +704,10 @@ function doExt(){
     ${sr('ค่างวดต่อเดือน',fm(n.bp)+' บาท')}
     ${sr('จำนวนปีที่ผ่อนจริง',pt(yM),'grn')}
     ${sr('⚡ เร็วขึ้น',pt(nM-yM),'grn')}
+    ${sr('ดอกเบี้ยเฉลี่ย 3 ปี',fp(avg3))}
     ${sr('EIR 3 ปี',fp(yE3))}
     ${sr('EIR 4 ปี',fp(yE4))}
+    ${sr('EIR ตลอดสัญญา',fp(yEF))}
     ${sr('ดอกเบี้ยรวม 3 ปี',fm(yI3)+' บาท')}
     ${sr('⚡ ประหยัดดอกเบี้ย 3 ปี',fm(nI3-yI3)+' บาท','grn')}
     ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(yTI)+' บาท')}
@@ -684,8 +719,10 @@ function doExt(){
     ${sr('ค่างวดต่อเดือน',fm(n.bp)+' บาท')}
     ${sr('จำนวนปีที่ผ่อนจริง',pt(mM),'grn')}
     ${sr('⚡ เร็วขึ้น',pt(nM-mM),'grn')}
+    ${sr('ดอกเบี้ยเฉลี่ย 3 ปี',fp(avg3))}
     ${sr('EIR 3 ปี',fp(mE3))}
     ${sr('EIR 4 ปี',fp(mE4))}
+    ${sr('EIR ตลอดสัญญา',fp(mEF))}
     ${sr('ดอกเบี้ยรวม 3 ปี',fm(mI3)+' บาท')}
     ${sr('⚡ ประหยัดดอกเบี้ย 3 ปี',fm(nI3-mI3)+' บาท','grn')}
     ${sr('ดอกเบี้ยรวมตลอดสัญญา',fm(mTI)+' บาท')}
@@ -743,6 +780,31 @@ function doPrint(tab){
   // Show .print-info in clone
   clone.querySelectorAll('.print-info').forEach(el=>el.style.display='block');
 
+  // CRITICAL: Force multi-column layout via inline styles
+  // This overrides any mobile CSS media queries that break grid during print
+  clone.querySelectorAll('.g2').forEach(el=>{
+    el.style.cssText='display:flex!important;gap:4px;width:100%';
+    Array.from(el.children).forEach(ch=>{
+      ch.style.cssText='flex:1;min-width:0;overflow:hidden';
+    });
+  });
+  clone.querySelectorAll('.g3').forEach(el=>{
+    el.style.cssText='display:flex!important;gap:4px;width:100%';
+    Array.from(el.children).forEach(ch=>{
+      ch.style.cssText='flex:1;min-width:0;overflow:hidden';
+    });
+  });
+
+  // Force tw containers to show full content
+  clone.querySelectorAll('.tw').forEach(el=>{
+    el.style.cssText='max-height:none;overflow:visible;border:1px solid #ccc;border-radius:3px';
+  });
+
+  // Force all tables to fit within their container
+  clone.querySelectorAll('table').forEach(el=>{
+    el.style.cssText='width:100%;table-layout:fixed;border-collapse:collapse;min-width:0';
+  });
+
   // Build print area with inline styles for A4
   let pa=document.createElement('div');
   pa.id='print-area';
@@ -755,16 +817,18 @@ function doPrint(tab){
 
 function buildPrintHTML(content){
   return `<style>
-    #print-area{font-family:'IBM Plex Sans Thai',sans-serif;font-size:8px;color:#1a1a1a;line-height:1.3}
+    #print-area{font-family:'IBM Plex Sans Thai',sans-serif;font-size:8px;color:#1a1a1a;line-height:1.3;max-width:100%;overflow:hidden}
     #print-area .print-info{display:block;margin-bottom:4px}
     #print-area .pi-title{font-size:12px;font-weight:700;text-align:center;margin-bottom:2px;padding-bottom:3px;border-bottom:2px solid #22d3a7;color:#0b1120}
     #print-area .pi-title span{color:#0a8a6a}
     #print-area .pi-sub{font-size:7px;text-align:center;color:#888;margin-bottom:3px}
-    #print-area .pi-bar{font-size:8px;color:#333;background:#f5f5f5;border:1px solid #ddd;border-radius:3px;padding:3px 8px;margin-bottom:4px;display:flex;flex-wrap:wrap;gap:2px 12px}
+    #print-area .pi-bar{font-size:8px;color:#333;background:#f5f5f5;border:1px solid #ddd;border-radius:3px;padding:3px 8px;margin-bottom:4px;display:flex!important;flex-wrap:wrap;gap:2px 12px}
     #print-area .pi-bar b{color:#0b1120}
-    #print-area .st{font-size:9px;font-weight:700;padding-bottom:2px;margin-bottom:3px;margin-top:5px;border-bottom:1px solid #ddd;color:#1a1a1a;display:flex;align-items:center;gap:4px}
-    #print-area .g2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-    #print-area .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+    #print-area .st{font-size:9px;font-weight:700;padding-bottom:2px;margin-bottom:3px;margin-top:5px;border-bottom:1px solid #ddd;color:#1a1a1a;display:flex!important;align-items:center;gap:4px}
+    #print-area .g2{display:flex!important;gap:4px!important;width:100%!important}
+    #print-area .g2>*{flex:1!important;min-width:0!important;overflow:hidden!important}
+    #print-area .g3{display:flex!important;gap:4px!important;width:100%!important}
+    #print-area .g3>*{flex:1!important;min-width:0!important;overflow:hidden!important}
     #print-area .sum-panel{border:1px solid #ccc;border-radius:4px;background:#fff;margin-bottom:3px;overflow:hidden}
     #print-area .panel-hdr{padding:2px 6px;font-size:8px;font-weight:700;border-bottom:1px solid #ddd;color:#1a1a1a}
     #print-area .panel-hdr.flat,#print-area .panel-hdr.bank-a{border-top:2px solid #22d3a7}
@@ -773,27 +837,25 @@ function buildPrintHTML(content){
     #print-area .panel-hdr.normal{border-top:2px solid #999}
     #print-area .panel-hdr.yearly{border-top:2px solid #d4a017}
     #print-area .panel-hdr.monthly{border-top:2px solid #22d3a7}
-    #print-area .sum-row{display:flex;justify-content:space-between;align-items:center;padding:1px 6px;border-bottom:1px solid #f0f0f0}
+    #print-area .sum-row{display:flex!important;justify-content:space-between;align-items:center;padding:1px 6px;border-bottom:1px solid #f0f0f0}
     #print-area .sum-row:last-child{border-bottom:none}
-    #print-area .sum-row .lbl{font-size:7.5px;color:#444}
-    #print-area .sum-row .val{font-size:7.5px;font-weight:700;color:#1a1a1a}
+    #print-area .sum-row .lbl{font-size:7.5px;color:#444;white-space:nowrap}
+    #print-area .sum-row .val{font-size:7.5px;font-weight:700;color:#1a1a1a;white-space:nowrap;text-align:right}
     #print-area .val.grn{color:#0a8a6a!important}
     #print-area .val.blu{color:#1a7abf!important}
     #print-area .val.gld{color:#b8860b!important}
     #print-area .val.pnk{color:#d63384!important}
     #print-area .pos{color:#0a8a6a!important}
     #print-area .neg{color:#d63384!important}
-    #print-area .tw{max-height:none;overflow:visible;border:1px solid #ccc;border-radius:3px}
-    #print-area table{width:100%;border-collapse:collapse;font-size:7px}
-    #print-area .sum-panel table{font-size:6px!important;margin-top:1px!important;line-height:1.1!important}
-    #print-area .sum-panel table th{font-size:5.5px!important;padding:1px 2px!important;color:#888!important;font-weight:600!important;border-bottom:1px solid #ccc!important;background:#f8f8f8!important;text-align:right!important}
-    #print-area .sum-panel table td{font-size:6px!important;padding:1px 2px!important;color:#555!important;border-bottom:1px solid #eee!important;text-align:right!important}
+    #print-area .tw{max-height:none!important;overflow:visible!important;border:1px solid #ccc;border-radius:3px}
+    #print-area table{width:100%!important;border-collapse:collapse;font-size:7px;table-layout:fixed!important;min-width:0!important}
+    #print-area .sum-panel table{font-size:6px!important;margin-top:1px!important;line-height:1.1!important;table-layout:fixed!important}
+    #print-area .sum-panel table th{font-size:5.5px!important;padding:1px 2px!important;color:#888!important;font-weight:600!important;border-bottom:1px solid #ccc!important;background:#f8f8f8!important;text-align:right!important;overflow:hidden!important}
+    #print-area .sum-panel table td{font-size:6px!important;padding:1px 2px!important;color:#555!important;border-bottom:1px solid #eee!important;text-align:right!important;overflow:hidden!important}
     #print-area .sum-panel table th:first-child,#print-area .sum-panel table td:first-child{text-align:center!important}
     #print-area .sum-panel table th[style],#print-area .sum-panel table td[style]{font-size:6px!important;padding:1px 2px!important}
-    #print-area .y3w{overflow:visible!important}
-    #print-area .y3t{table-layout:fixed!important;font-size:6px!important}
-    #print-area th{background:#f0f0f0;color:#1a1a1a;padding:1.5px 3px;font-size:6.5px;font-weight:700;text-align:right;border-bottom:1px solid #ccc}
-    #print-area td{padding:1px 3px;text-align:right;color:#333;border-bottom:1px solid #eee;font-size:7px}
+    #print-area th{background:#f0f0f0;color:#1a1a1a;padding:1.5px 3px;font-size:6.5px;font-weight:700;text-align:right;border-bottom:1px solid #ccc;overflow:hidden;white-space:nowrap}
+    #print-area td{padding:1px 3px;text-align:right;color:#333;border-bottom:1px solid #eee;font-size:7px;overflow:hidden;white-space:nowrap}
     #print-area th:first-child,#print-area td:first-child{text-align:center}
     #print-area .bg-a,#print-area .bg-b,#print-area .bg-d{background:none;padding:0;color:inherit;font-weight:700}
     #print-area .disclaimer{margin-top:4px;padding-top:3px;border-top:1px solid #ccc;background:none!important;border-radius:0!important;border-left:none!important;border-right:none!important;border-bottom:none!important;padding:3px 0 0 0!important}
@@ -801,9 +863,20 @@ function buildPrintHTML(content){
     #print-area .disclaimer p{font-size:6.5px;color:#888;line-height:1.5;margin:0;display:block}
     #print-area .hid{display:none}
     #print-area .accent{color:#0a8a6a}
+    #print-area div[style*="font-size:13px"],#print-area div[style*="font-size:12px"]{font-size:7px!important;margin-bottom:1px!important}
   </style>${content}`;
 }
 
+
+// Theme toggle
+function togTheme(){
+  let b=document.documentElement;
+  let cur=b.getAttribute('data-theme');
+  if(cur==='light'){b.removeAttribute('data-theme');document.getElementById('themeBtn').textContent='🌙';localStorage.setItem('theme','dark')}
+  else{b.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='☀️';localStorage.setItem('theme','light')}
+}
+// Load saved theme
+(function(){let t=localStorage.getItem('theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='☀️'}})();
 </script>
 </body>
 </html>
