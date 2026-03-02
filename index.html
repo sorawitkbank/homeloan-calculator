@@ -229,7 +229,7 @@ table th:first-child,table td:first-child{text-align:center}
   body>*:not(#print-area){display:none!important}
   .no-print{display:none!important}
   #print-area{display:block!important;background:#fff!important;color:#1a1a1a!important;font-family:'IBM Plex Sans Thai',sans-serif!important;font-size:9px!important;line-height:1.5!important}
-  #print-area *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #print-area *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;page-break-inside:avoid!important}
   @page{size:A4 portrait;margin:8mm}
 }
 </style>
@@ -850,6 +850,19 @@ function doPrint(tab){
   pa.id='print-area';
   pa.innerHTML=buildPrintHTML(clone.innerHTML);
   document.body.appendChild(pa);
+
+  // Auto-scale to fit A4 one page (critical for mobile browsers)
+  // A4 at 96dpi: 794x1123px, minus 8mm margin each side ≈ 764x1093px
+  let a4W=764,a4H=1093;
+  let contentH=pa.scrollHeight,contentW=pa.scrollWidth;
+  let scaleY=contentH>a4H?a4H/contentH:1;
+  let scaleX=contentW>a4W?a4W/contentW:1;
+  let scale=Math.min(scaleX,scaleY);
+  if(scale<1){
+    pa.style.transformOrigin='top left';
+    pa.style.transform='scale('+scale+')';
+    pa.style.width=(100/scale)+'%';
+  }
 
   window.print();
   setTimeout(()=>{let p=document.getElementById('print-area');if(p)p.remove()},500);
