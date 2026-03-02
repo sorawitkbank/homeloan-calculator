@@ -142,13 +142,18 @@ table th:first-child,table td:first-child{text-align:center}
   .ig{grid-template-columns:1fr}
 
   /* Header */
-  .hdr{padding:12px 14px;position:relative}
+  .hdr{padding:12px 14px;position:relative;flex-direction:column!important;align-items:center!important;gap:8px}
+  .hdr>div:last-child{order:-1}
+  .hdr>div:first-child{text-align:center;width:100%}
   .hdr h1{font-size:16px}
   .hdr .sub{font-size:9px}
+  .hdr img[alt="KBank"]{height:35px!important}
 
   /* Tabs: horizontal scroll, smaller */
-  .tabs{padding:6px 8px;gap:4px}
-  .tab{padding:8px 12px;font-size:12px;min-width:auto}
+  .tabs{padding:6px 8px;gap:4px;flex-wrap:nowrap!important}
+  .tabs>div{overflow-x:auto;-webkit-overflow-scrolling:touch;flex:1;min-width:0}
+  .tab{padding:8px 10px;font-size:11px;min-width:auto;white-space:nowrap}
+  .tabs .theme-btn{width:32px!important;height:32px!important;font-size:16px!important}
 
   /* Content area */
   .tc{padding:10px}
