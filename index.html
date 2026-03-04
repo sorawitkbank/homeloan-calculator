@@ -226,6 +226,7 @@ table th:first-child,table td:first-child{text-align:center}
 .no-print{}
 
 @media print{
+  html,body{background:#fff!important;background-color:#fff!important}
   body>*:not(#print-area){display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;position:absolute!important;left:-9999px!important}
   .no-print{display:none!important}
   .hdr,.tabs,.tc,.cd{display:none!important}
