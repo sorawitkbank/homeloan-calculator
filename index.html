@@ -226,9 +226,10 @@ table th:first-child,table td:first-child{text-align:center}
 .no-print{}
 
 @media print{
-  body>*:not(#print-area){display:none!important}
+  body>*:not(#print-area){display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;position:absolute!important;left:-9999px!important}
   .no-print{display:none!important}
-  #print-area{display:block!important;background:#fff!important;color:#1a1a1a!important;font-family:'IBM Plex Sans Thai',sans-serif!important;font-size:7px!important;line-height:1.2!important}
+  .hdr,.tabs,.tc,.cd{display:none!important}
+  #print-area{display:block!important;visibility:visible!important;position:static!important;background:#fff!important;color:#1a1a1a!important;font-family:'IBM Plex Sans Thai',sans-serif!important;font-size:7px!important;line-height:1.2!important}
   #print-area *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;page-break-inside:avoid!important}
   @page{size:A4 portrait;margin:6mm}
 }
@@ -849,12 +850,25 @@ function doPrint(tab){
   let pa=document.createElement('div');
   pa.id='print-area';
   pa.innerHTML=buildPrintHTML(clone.innerHTML);
+
+  // Hide ALL other body children before appending print area (critical for mobile)
+  let hiddenEls=[];
+  Array.from(document.body.children).forEach(el=>{
+    if(el.id!=='print-area'){
+      hiddenEls.push({el:el,prev:el.style.display});
+      el.style.display='none';
+    }
+  });
   document.body.appendChild(pa);
 
   // Give browser time to render before printing (especially mobile)
   setTimeout(()=>{
     window.print();
-    setTimeout(()=>{let p=document.getElementById('print-area');if(p)p.remove()},1000);
+    setTimeout(()=>{
+      let p=document.getElementById('print-area');if(p)p.remove();
+      // Restore hidden elements
+      hiddenEls.forEach(h=>h.el.style.display=h.prev);
+    },1000);
   },300);
 }
 
